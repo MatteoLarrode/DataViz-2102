@@ -61,7 +61,7 @@ users_world_df <- left_join(world, final_internet_data, by = c("iso_a3" = "iso3c
 
 Now on to the mapping!
 
-```{r, dpi = 100}
+```{r, dpi = 150}
 it_users_map <- ggplot(users_world_df, aes(fill = diff_users)) +
   geom_sf() +
 
@@ -209,7 +209,7 @@ bbox <- get_bounding_box_europe()
 
 ```
 
-```{r, dpi = 100}
+```{r, dpi = 150}
 tourism_eu_map <- ggplot(df, aes(fill = values)) +
   #make russia & non_eu countries grey b/c no data
   geom_sf(data = filter(eu, CNTR_ID == "RS"),
@@ -262,7 +262,7 @@ Describe the patterns in your map. What story are you communicating with your ma
 
 ### From gradient color scheme to classed scale
 
-```{r, dpi = 100}
+```{r, dpi = 150}
 it_users_map2 <- ggplot(users_world_df, aes(fill = diff_users)) +
   geom_sf() +
 
@@ -303,7 +303,7 @@ How does the new choice affect the map? Does the original or modified approach b
 
 ### Bonus map: Change of coordinates
 
-```{r, dpi = 100}
+```{r, dpi = 150}
 it_users_map2 <- ggplot(users_world_df, aes(fill = diff_users)) +
   geom_sf() +
 
