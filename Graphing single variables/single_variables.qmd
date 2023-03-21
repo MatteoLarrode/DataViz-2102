@@ -60,7 +60,8 @@ Now on to the plotting. Please note that the plots use the Roboto font, if you a
 
 ### 1.1 Bar chart
 
-```{r}
+```{r, fig.height=5, fig.width=6}
+
 library(ggplot2)
 library(ggthemes)
 
