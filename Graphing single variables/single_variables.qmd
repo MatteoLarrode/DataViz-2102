@@ -4,7 +4,6 @@ author: "Matteo Larrode"
 format: 
   gfm:
     code-fold: true
-editor: visual
 cache: true
 ---
 
