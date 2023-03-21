@@ -1,31 +1,39 @@
----
-title: "Assignment #4 - Making Maps"
-author: "Matteo Larrode"
-format: 
-  gfm:
-    code-fold: true
-editor: visual
-cache: true
----
+Assignment \#4 - Making Maps
+================
+Matteo Larrode
 
 ## Map 1: Change in Internet Adoption Across the World in the 2010s
 
-For this world map, I use the [rnaturalearth](https://cran.r-project.org/web/packages/rnaturalearth/vignettes/rnaturalearth.html) package that provides map data that can be visualized using other R packages. I will be mapping World Bank data using the [wbstats](https://cran.r-project.org/web/packages/wbstats/vignettes/wbstats.html) package.
+For this world map, I use the
+[rnaturalearth](https://cran.r-project.org/web/packages/rnaturalearth/vignettes/rnaturalearth.html)
+package that provides map data that can be visualized using other R
+packages. I will be mapping World Bank data using the
+[wbstats](https://cran.r-project.org/web/packages/wbstats/vignettes/wbstats.html)
+package.
 
-Let's first load the packages we will need for the map.
+Let’s first load the packages we will need for the map.
 
-```{r}
-#| output: false
+<details>
+<summary>Code</summary>
 
+``` r
 library(tidyverse)
 library(ggplot2)
 library(wbstats)
 library(rnaturalearth)
 ```
 
-I am interested in Internet penetration over the world. But instead of mapping its most recent value in every country, I chose to map changes in its rate. To reach this objective, some data wrangling is necessary first.
+</details>
 
-```{r}
+I am interested in Internet penetration over the world. But instead of
+mapping its most recent value in every country, I chose to map changes
+in its rate. To reach this objective, some data wrangling is necessary
+first.
+
+<details>
+<summary>Code</summary>
+
+``` r
 # set indicator variable to internet users (%) & get its info for later
 ind <- "IT.NET.USER.ZS"
 indicator_info <- filter(wb_cachelist$indicators, indicator_id == ind)
@@ -59,9 +67,14 @@ final_internet_data <- internet_data %>%
 users_world_df <- left_join(world, final_internet_data, by = c("iso_a3" = "iso3c"))
 ```
 
+</details>
+
 Now on to the mapping!
 
-```{r}
+<details>
+<summary>Code</summary>
+
+``` r
 it_users_map <- ggplot(users_world_df, aes(fill = diff_users)) +
   geom_sf() +
 
@@ -87,24 +100,42 @@ it_users_map <- ggplot(users_world_df, aes(fill = diff_users)) +
     caption = paste("Source:", indicator_info$source_org))
 
 it_users_map
-
 ```
 
-Describe the patterns in your map. What story are you communicating with your map? Does the map effectively communicate your story? Why or why not?
+</details>
+
+![](assignment_4_files/figure-commonmark/unnamed-chunk-3-1.png)
+
+Describe the patterns in your map. What story are you communicating with
+your map? Does the map effectively communicate your story? Why or why
+not?
 
 ## Map 2: Tourism in Europe
 
-I have used the [eurostat R package](https://github.com/rOpenGov/eurostat), that contains tools to access open data from [Eurostat](https://ec.europa.eu/eurostat), a database of high-quality statistics and data on Europe.
+I have used the [eurostat R
+package](https://github.com/rOpenGov/eurostat), that contains tools to
+access open data from [Eurostat](https://ec.europa.eu/eurostat), a
+database of high-quality statistics and data on Europe.
 
-An important concept here is the [Nomenclature of territorial units for statistics (NUTS)](https://ec.europa.eu/eurostat/web/nuts/background) classification. It is the system for dividing up the economic territory of the EU and the UK for the purpose of the socio-economic analyses of the regions. We will be using data on the NUTS 2 level, which is the statistical unit of approximately 800,000 to 3 million people.
+An important concept here is the [Nomenclature of territorial units for
+statistics (NUTS)](https://ec.europa.eu/eurostat/web/nuts/background)
+classification. It is the system for dividing up the economic territory
+of the EU and the UK for the purpose of the socio-economic analyses of
+the regions. We will be using data on the NUTS 2 level, which is the
+statistical unit of approximately 800,000 to 3 million people.
 
-For the spatial data, we will use the [giscoR package](https://cran.r-project.org/web/packages/giscoR/vignettes/giscoR.html). This package provides an easy interaction with the GISCO API, which gives access to a database containing core geographical data covering the whole of Europe at different levels.
+For the spatial data, we will use the [giscoR
+package](https://cran.r-project.org/web/packages/giscoR/vignettes/giscoR.html).
+This package provides an easy interaction with the GISCO API, which
+gives access to a database containing core geographical data covering
+the whole of Europe at different levels.
 
-Let's first load the packages we will need for the map.
+Let’s first load the packages we will need for the map.
 
-```{r}
-#| output: false
+<details>
+<summary>Code</summary>
 
+``` r
 library(tidyverse)
 library(sf)
 library(ggplot2)
@@ -112,13 +143,21 @@ library(eurostat) #pull data from eurostat
 library(giscoR) #pull NUTS 2 & country shapefiles
 ```
 
-I am interested in regional tourism statistics, so the indicator I will be mapping is the occupancy in collective accommodation establishments. More precisely, the arrivals at tourist accommodation establishments by NUTS 2 regions.
+</details>
 
-For this data wrangling, it is important to note that, although the last year measured is 2022, some regions only have data for 2021. We will therefore use the most recent available data for each region.
+I am interested in regional tourism statistics, so the indicator I will
+be mapping is the occupancy in collective accommodation establishments.
+More precisely, the arrivals at tourist accommodation establishments by
+NUTS 2 regions.
 
-```{r}
-#| output: false
+For this data wrangling, it is important to note that, although the last
+year measured is 2022, some regions only have data for 2021. We will
+therefore use the most recent available data for each region.
 
+<details>
+<summary>Code</summary>
+
+``` r
 #1.NUTS2 AND SHAPEFILES ---------
 
 #define longlat projection
@@ -182,11 +221,15 @@ wide_df <- pivot_wider(eurostat_df,
 df <- left_join(nuts2, wide_df, by = "NUTS_ID")
 ```
 
-Now that we have merged the shapefile and data from Eurostat, following the NUTS 2 classification, we can map our chosen indicator
+</details>
 
-```{r}
-#| output: false
+Now that we have merged the shapefile and data from Eurostat, following
+the NUTS 2 classification, we can map our chosen indicator
 
+<details>
+<summary>Code</summary>
+
+``` r
 #bounding box
 crsLAEA <- "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +datum=WGS84 +units=m +no_defs"
 
@@ -206,10 +249,13 @@ get_bounding_box_europe <- function() {
     return(bbox)
 }
 bbox <- get_bounding_box_europe()
-
 ```
 
-```{r}
+</details>
+<details>
+<summary>Code</summary>
+
+``` r
 tourism_eu_map <- ggplot(df, aes(fill = values)) +
   #make russia & non_eu countries grey b/c no data
   geom_sf(data = filter(eu, CNTR_ID == "RS"),
@@ -251,18 +297,29 @@ tourism_eu_map <- ggplot(df, aes(fill = values)) +
     caption = paste("Source: Eurostat"))
 
 tourism_eu_map
-
 ```
 
-While the default "fill" in the first map worked fine, here, we notice that most observations are on the lower end of the spectrum. With only a few regions distinguisly higher than the rest. This map would benefit from having a legend split into breaks
+</details>
 
-Describe the patterns in your map. What story are you communicating with your map? Does the map effectively communicate your story? Why or why not?
+![](assignment_4_files/figure-commonmark/unnamed-chunk-7-1.png)
+
+While the default “fill” in the first map worked fine, here, we notice
+that most observations are on the lower end of the spectrum. With only a
+few regions distinguisly higher than the rest. This map would benefit
+from having a legend split into breaks
+
+Describe the patterns in your map. What story are you communicating with
+your map? Does the map effectively communicate your story? Why or why
+not?
 
 ## Alternative Maps
 
 ### From gradient color scheme to classed scale
 
-```{r}
+<details>
+<summary>Code</summary>
+
+``` r
 it_users_map2 <- ggplot(users_world_df, aes(fill = diff_users)) +
   geom_sf() +
 
@@ -291,19 +348,35 @@ it_users_map2 <- ggplot(users_world_df, aes(fill = diff_users)) +
 it_users_map2
 ```
 
-How does the new choice affect the map? Does the original or modified approach better represent the data? Why?
+</details>
+
+![](assignment_4_files/figure-commonmark/unnamed-chunk-8-1.png)
+
+How does the new choice affect the map? Does the original or modified
+approach better represent the data? Why?
 
 ### From sequential to divergent scale
 
-```{r}
+<details>
+<summary>Code</summary>
+
+``` r
 2 * 2
 ```
 
-How does the new choice affect the map? Does the original or modified approach better represent the data? Why?
+</details>
+
+    [1] 4
+
+How does the new choice affect the map? Does the original or modified
+approach better represent the data? Why?
 
 ### Bonus map: Change of coordinates
 
-```{r}
+<details>
+<summary>Code</summary>
+
+``` r
 it_users_map2 <- ggplot(users_world_df, aes(fill = diff_users)) +
   geom_sf() +
 
@@ -332,3 +405,7 @@ it_users_map2 <- ggplot(users_world_df, aes(fill = diff_users)) +
 
 it_users_map2
 ```
+
+</details>
+
+![](assignment_4_files/figure-commonmark/unnamed-chunk-10-1.png)

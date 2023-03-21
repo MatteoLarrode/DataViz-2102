@@ -60,7 +60,7 @@ Now on to the plotting. Please note that the plots use the Roboto font, if you a
 
 ### 1.1 Bar chart
 
-```{r, dpi = 150}
+```{r, dpi = 100}
 
 library(ggplot2)
 library(ggthemes)
@@ -131,7 +131,7 @@ Bar plots are simple, easy to understand and versatile. However, although they c
 
 ### 1.2 Stacked bars
 
-```{r, dpi = 150}
+```{r, dpi = 100}
 
 plot1.2 <- ggplot(us_dem_example_grouped, 
                   aes(x="", y=value, fill= USDEMOCRACY_EXAMPLE_LONG)) +
@@ -176,7 +176,7 @@ The strength of stacked barplots is to show proportions within a variable across
 
 ### 1.3 Pie chart
 
-```{r, dpi = 150}
+```{r, dpi = 100}
 
 plot1.3 <- ggplot(us_dem_example_grouped, 
                   aes(x="", y=value, fill= USDEMOCRACY_EXAMPLE_LONG)) +
@@ -281,7 +281,7 @@ game_scores <- game_scores %>%
 
 ```
 
-```{r, dpi = 150}
+```{r, dpi = 100}
 #| warning: false
 
 # Define the color palette
@@ -339,7 +339,7 @@ Finally, the histogram is very limited in showing precise information about the 
 
 ### 2.2 Cumulative density plot
 
-```{r, dpi = 150}
+```{r, dpi = 100}
 
 plot2.2 <- ggplot(game_scores, aes(x = meta_score))+
   stat_ecdf(geom = "step")+
@@ -380,7 +380,7 @@ Overall, cumulative density plots are a useful tool for exploring and comparing 
 
 ### 2.3 Violin plot
 
-```{r, dpi = 150}
+```{r, dpi = 100}
 
 plot2.3 <- ggplot(game_scores, aes(x="", y = meta_score))+
   geom_violin(trim = F, fill = "grey")+
@@ -460,7 +460,7 @@ internet_users_2021 <- internet_users%>%
 
 ### 3.1 Histogram
 
-```{r, dpi = 150}
+```{r, dpi = 100}
 #| warning: false
 
 plot3.1 <- ggplot(internet_users_2021, aes(y = value_2021_perc))+
@@ -490,7 +490,7 @@ This histogram seems to show a distribution that appears to be bimodal. There is
 
 ### 3.2 Density plot
 
-```{r, dpi = 150}
+```{r, dpi = 100}
 plot3.2 <- ggplot(internet_users_2021, aes(x = value_2021_perc))+
   geom_density(col = "#5b92e5")+
   
@@ -519,7 +519,7 @@ This density plot is the perfect tool to confirm the observation we made from th
 
 ### 3.3 Violin
 
-```{r, dpi = 150}
+```{r, dpi = 100}
 
 plot3.3 <-  ggplot(internet_users_2021, aes(x = value_2021_perc, y=""))+
   geom_violin(fill = "#5b92e5")+
@@ -584,7 +584,7 @@ data_grouped <- data_binned %>%
 
 I created an alternative graph to illustrate the data I had collected.
 
-```{r, dpi = 150}
+```{r, dpi = 100}
 #| warning: false
 
 library(RColorBrewer)
