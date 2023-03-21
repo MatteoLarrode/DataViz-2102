@@ -2,7 +2,7 @@
 title: "Assignment #4 - Making Maps"
 author: "Matteo Larrode"
 format: 
-  gfm:
+  html:
     code-fold: true
 editor: visual
 cache: true

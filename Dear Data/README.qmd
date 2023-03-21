@@ -1,7 +1,7 @@
 ---
 title: "Matteo's Dear Data"
 author: "Matteo Larrode (@matteoStats)"
-format: html
+format: gfm
 editor: visual
 ---
 
@@ -19,9 +19,9 @@ my_procras <- readr::read_csv("dataset.csv") %>%
 
 I then cleaned the data: </br>
 
-- grouped some tasks </br>
+-   grouped some tasks </br>
 
-- binned procrastination times into categories
+-   binned procrastination times into categories
 
 ```{r clean-data}
 
@@ -51,13 +51,13 @@ my_procras_final <- my_procras_final%>%
 
 ![Dear Data](img/dear-data.png)</br>
 
---- 
+------------------------------------------------------------------------
 
 ![Dear Data Back](img/dear-data-back.png) </br>
 
 ## Explanation of the graph
 
-Space at the back of the card is quite limited so here is a more detailed explanation of the visualization. 
+Space at the back of the card is quite limited so here is a more detailed explanation of the visualization.
 
 #### 1) Representation of time
 
@@ -72,7 +72,7 @@ Every day is a distinct ribbon that starts when I wake up and ends when I turn m
 Throughout the day, I have counted and represented the moment I decide that I need to start a task. Here is the list of the tasks and colors used to represent them.
 
 | Task                                                                          | Colour |
-|-----------------------------------------------------------|-------------|
+|--------------------------------------------------------|----------------|
 | Get out of bed (morning) / Lights off (night)                                 | Green  |
 | Work or study                                                                 | Blue   |
 | Cook or tidy up                                                               | Yellow |
