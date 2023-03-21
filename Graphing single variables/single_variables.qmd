@@ -2,7 +2,7 @@
 title: " Graphing single variables [Assignment #3]"
 author: "Matteo Larrode"
 format: 
-  html:
+  gfm:
     code-fold: true
 editor: visual
 cache: true
@@ -236,7 +236,7 @@ When plotting a single categorical variable, little information is conveyed to t
 
 There is no easy answer to this question. It mostly depends on the data at hand and the story we want to tell. However, in the context of a univariate chart, the stacked bar plot does not seem very intuitive. As the efficiency of pie chart is undermined by the struggle humans have to read angles, it seems that the bar plot takes the upper hand. Although in a context where the variable has many levels, a bar plot might feel too clustered and alternatives such as the lollipop chart could be better solutions.
 
-It is also important to note that if the percentages inside the charts were to be removed, the bar chart most likely be the only plot that allows to properly compare proportions. So in terms of the information given by the geometry **itself**, the bar chart does seem best suited in our context. 
+It is also important to note that if the percentages inside the charts were to be removed, the bar chart most likely be the only plot that allows to properly compare proportions. So in terms of the information given by the geometry **itself**, the bar chart does seem best suited in our context.
 
 ## Variable #2: Continuous variable - Video game critic reviews
 
@@ -321,16 +321,13 @@ plot2.1
 
 When plotting a histogram, the importance of carefully determining the number of bins cannot be understated. An important factor considering the variable used here is that it presents a negative skew. Using too few bins, the histogram would not really portray the data very well, especially this skew. But using too many gave a broken comb look, and was giving far too much information about small variation. I tried to strike a balance by choosing a bindwith of 3, dividing the 100 values the score can take into roughly 33 intervals.
 
-Another problem was that the minimum score is 19, so the default setting for the histogram was making the x-axis start there. I made sure the axis' origin is 0 and that the score of 50 is in the middle of the axis so that the graph would not mislead the viewer. 
+Another problem was that the minimum score is 19, so the default setting for the histogram was making the x-axis start there. I made sure the axis' origin is 0 and that the score of 50 is in the middle of the axis so that the graph would not mislead the viewer.
 
-Then came the question of choosing the breaks of both axes. The story told by this chart is that Metacritic scores are usually quite high. Histograms being better at identifying general patterns and trends in the data, there was no need to be too precise in the breaks of the x-axis. Similarly, the objective being to show the shape of the distribution, including y-axis labels was unnecessary. I only added the number of observations in the subtitle to inform the viewer on the important information that is sample size. 
+Then came the question of choosing the breaks of both axes. The story told by this chart is that Metacritic scores are usually quite high. Histograms being better at identifying general patterns and trends in the data, there was no need to be too precise in the breaks of the x-axis. Similarly, the objective being to show the shape of the distribution, including y-axis labels was unnecessary. I only added the number of observations in the subtitle to inform the viewer on the important information that is sample size.
 
-Finally, I found interesting to add colour to the chart. Information about the distribution of scores being very easily identified with the shape histogram itself, I chose to represent the quality of games in each bin. From then I had two choices that furthered different objectives: </br>
-- Use a sequential colour scale: show the increasing quality of games. </br>
-- Use a diverging colour scale with a norm at the median grade: emphasize the difference between scores lower than the median and those higher. </br>
+Finally, I found interesting to add colour to the chart. Information about the distribution of scores being very easily identified with the shape histogram itself, I chose to represent the quality of games in each bin. From then I had two choices that furthered different objectives: </br> - Use a sequential colour scale: show the increasing quality of games. </br> - Use a diverging colour scale with a norm at the median grade: emphasize the difference between scores lower than the median and those higher. </br>
 
 I chose this second option to be able to give precise information about the distribution (median & deciles) that the histogram otherwise fails to convey. However, after adding these colours, the graph was no longer univariate because it was also plotting the decile. We will see later the cumulative density graph, whose main strength is to display information on the distribution of the data, same information that could not have been given by a truly univariate histogram.
-
 
 #### Advantages & Disadvantages
 
@@ -338,8 +335,7 @@ This histogram is a good example of how the geometry's strength lies in summariz
 
 On the other hand, this plot also displays some of the limitations of histograms. First, while I was making it, I did notice how very different interpretations can arise from the choice of bin width. Arguably, most plotting techniques have the capacity to be misleading, but histograms can prove especially hard to yield. Second, histograms can be sensitive to outliers, which can make them difficult to interpret. While this was not much of a problem here, it is definitely a factor to take into account.
 
-Finally, the histogram is very limited in showing precise information about the distribution of the data. I could only fix this limitation by using colors, making the graph multivariate. 
-
+Finally, the histogram is very limited in showing precise information about the distribution of the data. I could only fix this limitation by using colors, making the graph multivariate.
 
 ### 2.2 Cumulative density plot
 
@@ -378,7 +374,7 @@ The main interest of this graph is to map scores into percentiles and vice-versa
 
 #### Advantages & Disadvantages
 
-Cumulative density plots provide a clear picture of the distribution of the data. They are even more insightful when used to highlight differences between datasets. This potential is unfortunately not explored in the case of a univariate chart. 
+Cumulative density plots provide a clear picture of the distribution of the data. They are even more insightful when used to highlight differences between datasets. This potential is unfortunately not explored in the case of a univariate chart.
 
 Overall, cumulative density plots are a useful tool for exploring and comparing the distribution of data. However, because they are not as visually intuitive as other types of graphs, they should be used in conjunction with other graphical methods like histograms or boxplots to gain a comprehensive understanding of the data.
 
@@ -412,11 +408,12 @@ plot2.3 <- ggplot(game_scores, aes(x="", y = meta_score))+
 plot2.3
 
 ```
+
 #### Advantages & Disadvantages
 
 The violin plot combines features of a box plot and a kernel density plot. Its main advantage is to show the shape and skewness of the distribution. As we can see in the chart above, this type of plot is especially useful for identifying outliers and understanding the central tendency of the data.
 
-Compared to a boxplot for example, it provides a more detailed representation of the distribution of the data than a box plot and can more visually appealing. However, it can be more difficult to interpret, especially for people who are not familiar with the visualization. I decided to add the box plot inside to make this plot accessible to a wider audience. 
+Compared to a boxplot for example, it provides a more detailed representation of the distribution of the data than a box plot and can more visually appealing. However, it can be more difficult to interpret, especially for people who are not familiar with the visualization. I decided to add the box plot inside to make this plot accessible to a wider audience.
 
 Overall, this violin plots is a useful tool for exploring the distribution of the single variable we are plotting. Being more difficult to interpret, it can serve as a very good complement to a histogram for example.
 
@@ -424,12 +421,11 @@ Overall, this violin plots is a useful tool for exploring the distribution of th
 
 #### Patterns in the data & chart comparison
 
-The main interest of plotting this data was to show that Metacritic tends to give rather high scores to the game it scores. All three graphs show this basic observation, but the histogram does it at first glance and is most likely the best if the objective is only to share this information. 
+The main interest of plotting this data was to show that Metacritic tends to give rather high scores to the game it scores. All three graphs show this basic observation, but the histogram does it at first glance and is most likely the best if the objective is only to share this information.
 
-Now let us go deeper in the analysis. If the objective, for example, is to get a precise idea of the quality of a game compared to the others graded on Metacritic. This information could be of interest to someone looking to buy a game! Then, the cumulative density plot is arguably best suited to this task because it allows to map the score of a game to the percentile to which it belongs. If a reader sees a grade of 60, the cumulative density plot allows to instantly tell the game is among the worst 15% of all games graded by the website. 
+Now let us go deeper in the analysis. If the objective, for example, is to get a precise idea of the quality of a game compared to the others graded on Metacritic. This information could be of interest to someone looking to buy a game! Then, the cumulative density plot is arguably best suited to this task because it allows to map the score of a game to the percentile to which it belongs. If a reader sees a grade of 60, the cumulative density plot allows to instantly tell the game is among the worst 15% of all games graded by the website.
 
-Drawing these graphs gave away very interesting information that deserve to be futher analysed. Most notably the negative skew in the data. A reader on the website could assume that a mediocre game, neither good or bad, would get a grade of 50. And that a game getting a score of 75 would be among the good games. What these charts show is that most games graded by Metacritic actually score among those high scores! And that a game scoring 50 is actually among the worst games graded on the website. Which conclusion should we reach? I argue that it depends on how Metacritic choose the games they grade, and on their scoring system. If the selection is fully random, then, either most games produced are actually very good, or the scoring system is very generous and might need some revising. But it might also be the case that Metacritic writers prefer (voluntarily or due to a bias) to grade good games and do it more often.  
-
+Drawing these graphs gave away very interesting information that deserve to be futher analysed. Most notably the negative skew in the data. A reader on the website could assume that a mediocre game, neither good or bad, would get a grade of 50. And that a game getting a score of 75 would be among the good games. What these charts show is that most games graded by Metacritic actually score among those high scores! And that a game scoring 50 is actually among the worst games graded on the website. Which conclusion should we reach? I argue that it depends on how Metacritic choose the games they grade, and on their scoring system. If the selection is fully random, then, either most games produced are actually very good, or the scoring system is very generous and might need some revising. But it might also be the case that Metacritic writers prefer (voluntarily or due to a bias) to grade good games and do it more often.
 
 # Question 2 - An interesting variable
 
@@ -437,9 +433,9 @@ As a political science student with a passion for technology, I am very interest
 
 Social media platforms have fundamentally transformed the landscape of social and political movements. They have allowed individuals to bypass traditional gatekeepers of information, such as the mainstream media, and connect with each other directly. This has enabled dissidents to spread information and organize more quickly and effectively than ever before. But on the other hand, they can also be easily monitored and censored by governments, potentially putting activists at risk.
 
-In the prospect of researching this subject deeper in the future, I looked for data related to this subject. The International Telecommunication Union (ITU) is a specialized agency of the United Nations that is responsible for coordinating global telecommunications. Their website includes a range of [data on internet and mobile phone use in different countries](https://www.itu.int/en/ITU-D/Statistics/Pages/stat/default.aspx).  
+In the prospect of researching this subject deeper in the future, I looked for data related to this subject. The International Telecommunication Union (ITU) is a specialized agency of the United Nations that is responsible for coordinating global telecommunications. Their website includes a range of [data on internet and mobile phone use in different countries](https://www.itu.int/en/ITU-D/Statistics/Pages/stat/default.aspx).
 
-The dataset I downloaded contains the percentage of individuals using the internet across more than 200 countries and economies of the world. Let's load it. 
+The dataset I downloaded contains the percentage of individuals using the internet across more than 200 countries and economies of the world. Let's load it.
 
 ```{r}
 library(readxl)
@@ -449,7 +445,7 @@ internet_users <- read_excel("data/PercentIndividualsUsingInternet.xlsx")
 
 # Question 3 - Comparing charts
 
-In the dataset I just loaded, the variable I will plot using different geometries is the percentage of internet users in 2021. This variable is continuous. 
+In the dataset I just loaded, the variable I will plot using different geometries is the percentage of internet users in 2021. This variable is continuous.
 
 ```{r}
 #select variable & filter out NAs
@@ -461,6 +457,7 @@ internet_users_2021 <- internet_users%>%
   print(n=10)
 
 ```
+
 ### 3.1 Histogram
 
 ```{r}
@@ -488,7 +485,8 @@ plot3.1 <- ggplot(internet_users_2021, aes(y = value_2021_perc))+
 
 plot3.1
 ```
-This histogram seems to show a distribution that appears to be bimodal. There is a clear peak between 75% and 100%, but there is also a high number of values around 35%. Let's further explore the distribution of the data with a density plot. 
+
+This histogram seems to show a distribution that appears to be bimodal. There is a clear peak between 75% and 100%, but there is also a high number of values around 35%. Let's further explore the distribution of the data with a density plot.
 
 ### 3.2 Density plot
 
@@ -516,7 +514,8 @@ plot3.2 <- ggplot(internet_users_2021, aes(x = value_2021_perc))+
 plot3.2
 
 ```
-This density plot is the perfect tool to confirm the observation we made from the histogram. Even if it is flatter than the second peak, there is a first bump in density around 35% access to internet. 
+
+This density plot is the perfect tool to confirm the observation we made from the histogram. Even if it is flatter than the second peak, there is a first bump in density around 35% access to internet.
 
 ### 3.3 Violin
 
@@ -545,19 +544,18 @@ plot3.3 <-  ggplot(internet_users_2021, aes(x = value_2021_perc, y=""))+
 plot3.3
 
 ```
-This violin plot, with an embedded boxplot, shows very efficiently the shape of the distribution of the data. The boxplot is quite long, signifying an important inter-quartile range, and the two modes can be seen too. 
 
+This violin plot, with an embedded boxplot, shows very efficiently the shape of the distribution of the data. The boxplot is quite long, signifying an important inter-quartile range, and the two modes can be seen too.
 
 #### Chart comparison
 
-Those univariate charts offer interesting insight on the continuous variable that I chose to explore. The histogram offers a good first glance at the data in a simple way, while the density plot allows to further explore the distribution observed. The violin also offers some interesting insight on the distribution too, most notably the media and interquartile range. 
+Those univariate charts offer interesting insight on the continuous variable that I chose to explore. The histogram offers a good first glance at the data in a simple way, while the density plot allows to further explore the distribution observed. The violin also offers some interesting insight on the distribution too, most notably the media and interquartile range.
 
-However, it is worth noting that multivariate graphs including country names, or a variable that measures time for example, would be able to show significantly more information than these basic univariate graphs. 
+However, it is worth noting that multivariate graphs including country names, or a variable that measures time for example, would be able to show significantly more information than these basic univariate graphs.
 
 # Dear Data v2
 
 I used my Dear Data project to try and visualize data in a creative way, one that I could not do with a standard plot in R. So, after some data wrangling:
-
 
 ```{r}
 #| output: false
@@ -584,7 +582,7 @@ data_grouped <- data_binned %>%
 
 ```
 
-I created an alternative graph to illustrate the data I had collected. 
+I created an alternative graph to illustrate the data I had collected.
 
 ```{r}
 #| warning: false
@@ -621,8 +619,9 @@ procras_barplot <- ggplot(data_grouped, aes(x = day, y = sum_procras, fill = tas
 procras_barplot
 
 ```
+
 #### A few insights
 
-This stacked barplot allows to come to the same conclusions as the hand-drawn graph. Most notably, notice how the week is divided into two distinct parts. I procrastinate more and more until Wednesday, and then gain more motivation when comes Thursday. Procrastination then starts to rise again until the week-end. 
+This stacked barplot allows to come to the same conclusions as the hand-drawn graph. Most notably, notice how the week is divided into two distinct parts. I procrastinate more and more until Wednesday, and then gain more motivation when comes Thursday. Procrastination then starts to rise again until the week-end.
 
 The evolution of the nature of the tasks procrastinated is also interesting, and can be easily observed thanks to this stacked barplot.
