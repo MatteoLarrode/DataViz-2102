@@ -55,12 +55,19 @@ internet_data <- internet_data %>%
   ungroup() %>%
   filter(date == min_year | date == max_year)
 
-#then: compute the difference between oldest and newest values
+#then: compute the % difference between oldest and newest values
 final_internet_data <- internet_data %>%
   group_by(iso3c) %>%
   arrange(date, .by_group = TRUE) %>%
-  mutate(diff_users = IT.NET.USER.ZS - lag(IT.NET.USER.ZS, default = first(IT.NET.USER.ZS)))%>%
-  filter(diff_users != 0)
+  mutate(
+    #percent change
+    diff_users_pct = (IT.NET.USER.ZS - lag(IT.NET.USER.ZS, default = first(IT.NET.USER.ZS))) /
+           lag(IT.NET.USER.ZS, default = 1)*100, 
+    #absolute change
+    diff_users_abs = IT.NET.USER.ZS - lag(IT.NET.USER.ZS, default = first(IT.NET.USER.ZS)),
+    #rate change
+    diff_users_x = IT.NET.USER.ZS / lag(IT.NET.USER.ZS, default = first(IT.NET.USER.ZS))) %>%
+  filter(diff_users_abs != 0)
 
 
 #now join the geography dataset & the internet users data
@@ -75,12 +82,13 @@ Now on to the mapping!
 <summary>Code</summary>
 
 ``` r
-it_users_map <- ggplot(users_world_df, aes(fill = diff_users)) +
+it_users_map <- ggplot(users_world_df, aes(fill = diff_users_abs)) +
   geom_sf() +
 
   theme_void()+
   #more adjustements
-  theme(text = element_text(color = "#22211d"), 
+  theme(text = element_text(color = "#22211d"),
+        plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"),
         plot.background = element_rect(fill = "#f5f5f2", color = NA), 
         panel.background = element_rect(fill = "#f5f5f2", color = NA), 
         legend.background = element_rect(fill = "#f5f5f2", color = NA),
@@ -90,12 +98,15 @@ it_users_map <- ggplot(users_world_df, aes(fill = diff_users)) +
         plot.subtitle = element_text(size= 10, hjust=0.01, color = "#4e4d47",
                                 margin = margin(b = -0.1, t = 0.43, l = 2, unit = "cm")),
         plot.caption = element_text( size=8, color = "#4e4d47", 
-                                 margin = margin(b = 0.3, r=-99, unit = "cm")),
-        legend.position = "right")+
+                                 margin = margin(t = 0.7, b = 0.3, r=-99, unit = "cm")),
+        legend.position = "bottom",
+        legend.text = element_text(size = 8),
+        legend.key.height= unit(0.3, 'cm'),
+        legend.key.width= unit(1.5, 'cm'))+
   
   scale_fill_viridis_c(option = "plasma")+
-  labs(title = "Change in Internet Adoption Across the World in the 2010s",
-       subtitle = "Difference in internet penetration rates (% of population using the internet) from 2010 to 2021",
+  labs(title = "Change in Internet Penetration Across the World in the 2010s",
+       subtitle = "Absolute change in % of population with access to the Internet from 2010 to 2021",
     fill = NULL,
     caption = paste("Source:", indicator_info$source_org))
 
@@ -106,9 +117,51 @@ it_users_map
 
 ![](assignment_4_files/figure-commonmark/unnamed-chunk-3-1.png)
 
-Describe the patterns in your map. What story are you communicating with
-your map? Does the map effectively communicate your story? Why or why
-not?
+This first map displays changes in Internet penetration rates throughout
+the world in the 2010s. It uses a sequential, gradient color scheme,
+where warmer colors are associated with bigger changes.
+
+The first choice was to represent change of Internet penetration instead
+of the current or past penetration rate itself. Here, the map does not
+display the amount of people having access to the Internet in each
+country, but the development of said access over a period of time.
+Developed countries that already had widespread access to the Internet
+in 2010, mostly in Europe, North America and Australia are therefore
+associated with smaller changes.
+
+This map shows the major increase in Internet penetration that has
+occurred in South and Central America in the 2010s, with increases of
+more than 30 percentage points. Many countries in South-East Asia,
+Central Asia, and the Middle East have experienced similar increases,
+with some exceptions. And while some African countries did undergo
+significant increases in penetration rates, especially in the North and
+South, the continent still lags behind in terms of the development of
+its Internet infrastructure.
+
+The choice of how to represent change is very important too. The choice
+made here is to use the absolute change in penetration rate. This
+measure favours countries that developed access to the Internet to a
+large number of their population over the period of time studied.
+Another option was to map the growth rate, that is the percentage of
+increase for each country over the time period studied. Doing so would
+have given very different results, especially for countries with low
+penetration rates.
+
+For example, Angola went from a penetration rate of around 3% to 36%.
+This represents a growth of more than 1,000%! The country multiplied its
+access to the Internet by 12, but this corresponds to an absolute
+increase of only 33 percentage points. In contrast, Brazil jumped from
+41% to 81%, an absolute increase of 40 percentage points, while it only
+doubled its access to the Internet with a growth of 100% over the ten
+years.
+
+Therefore, a map representing relative growth of Internet penetration
+rates would have looked very different, and told a very different story
+than the one displayed in this report. I would use growth rates, most
+likely with a log scale, if I were to map the same variable on the scale
+of a single continent; it would allows to better compare the development
+efforts of nations that share similar characteristics and penetration
+rates.
 
 ## Map 2: Tourism in Europe
 
