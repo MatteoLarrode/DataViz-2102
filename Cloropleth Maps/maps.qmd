@@ -488,7 +488,7 @@ tourism_eu_map_div <- ggplot() +
         legend.title = element_text(color = "#4e4d47", size = 10))+
   
   # use scale_fill_gradient2() for diverging color scale
-  scale_fill_gradient2(low = "#2a5674",mid = "white", high = "#bf3b3b", 
+  scale_fill_gradient2(low = "#0000AF",mid = "white", high = "#bf3b3b", 
                        midpoint = 170,
                        na.value = "#cacaca") + 
   
