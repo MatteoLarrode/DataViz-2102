@@ -5,7 +5,6 @@ format:
   gfm:
     code-fold: true
 editor: visual
-cache: true
 ---
 
 ## Map 1: Change in Internet Adoption Across the World in the 2010s
