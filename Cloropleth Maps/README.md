@@ -203,10 +203,6 @@ be mapping is the occupancy in collective accommodation establishments.
 More precisely, the arrivals at tourist accommodation establishments by
 NUTS 2 regions.
 
-For this data wrangling, it is important to note that, although the last
-year measured is 2022, some regions only have data for 2021. We will
-therefore use the most recent available data for each region.
-
 <details>
 <summary>Code</summary>
 
@@ -216,18 +212,18 @@ therefore use the most recent available data for each region.
 #define longlat projection
 crsLONGLAT <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
-#get sf object of Europe
+#get sf object of Europe -> NUTS 2 level
 nuts2 <- giscoR::gisco_get_nuts(
     year = "2021",
     resolution = "3",
     nuts_level = "2") %>%
   sf::st_transform(crsLONGLAT)
 
-#get country codes
+#get sf object of countries -> overlay map with national boundary map
 cntrys <- giscoR::gisco_get_countries(
     year = "2020",
     resolution = "3",
-    region = c("Europe", "Asia")) %>%
+    region = c("Europe", "Asia")) %>%   #Asia included for Cyprus and Moldova
     sf::st_transform(crsLONGLAT)
 
 # Countries in giscoR object but NOT in eurostat dataset
@@ -239,25 +235,37 @@ non_eu_list <- c(
     "BA", "BY", "GE",
     "MD", "RU", "UA")
 
+#countries in eurostat dataset
 eu_list <- c(unique(nuts2$CNTR_CODE))
 
-eu <- cntrys |>
+#European countries we want mapped
+eu <- cntrys %>%
     filter(CNTR_ID %in% eu_list)
 
-non_eu <- cntrys |>
+#Non-EU countries we want mapped too
+non_eu <- cntrys %>%
     filter(CNTR_ID %in% non_eu_list)
+```
 
+</details>
+
+For this data wrangling, it is important to note that, although the last
+year measured is 2022, some regions only have data for 2021. We will
+therefore use the most recent available data for each region.
+
+<details>
+<summary>Code</summary>
+
+``` r
 #2. EUROSTAT DATA -----------
 #indicator for our variable of interest
 ind2 <- "tour_occ_arn2"
 
 # get NUTS2-level data
-eurostat_df <- eurostat::get_eurostat(
-  ind2,
-  time_format = "num") %>%
-filter(nace_r2 == "I551-I553" & time >= 2020 & c_resid == "TOTAL" & unit == "NR") %>%
-select(geo, time, values) %>%
-mutate(values = round(values / 10000))
+eurostat_df <- eurostat::get_eurostat(ind2, time_format = "num") %>%
+  filter(nace_r2 == "I551-I553" & time >= 2020 & c_resid == "TOTAL" & unit == "NR") %>%
+  select(geo, time, values) %>%
+  mutate(values = round(values / 10000))
 
 names(eurostat_df)[1] <- "NUTS_ID"
 
@@ -283,8 +291,10 @@ the NUTS 2 classification, we can map our chosen indicator
 <summary>Code</summary>
 
 ``` r
-#bounding box
+#Lambert projection
 crsLAEA <- "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +datum=WGS84 +units=m +no_defs"
+
+#bounding box -> center on Europe & omit oversees territories
 
 get_bounding_box_europe <- function() {
     xmin <- -10.6600
@@ -309,14 +319,16 @@ bbox <- get_bounding_box_europe()
 <summary>Code</summary>
 
 ``` r
-tourism_eu_map <- ggplot(df, aes(fill = values)) +
-  #make russia & non_eu countries grey b/c no data
+tourism_eu_map <- ggplot() +
+  #fix issue with Kosovo (considered a part of Serbia in the country shp) -> grey base layer 
   geom_sf(data = filter(eu, CNTR_ID == "RS"),
           color = "grey20", size = 0.15, fill = "#cacaca") +
+  #make non_eu countries grey b/c no Eurostat data
   geom_sf(data = non_eu, 
           color = "grey20", size = 0.125, fill = "#cacaca") +
-  
-  geom_sf(data = df, color = NA, size = 0) +
+  #plot data BUT removing the borders (NUTS2 are too complicated)
+  geom_sf(data = df, aes(fill = values), color = NA, size = 0) +
+  #add country borders (but without filling the polygons)
   geom_sf(data = eu, color = "grey20", size = 0.125, fill = "transparent") +
     
   coord_sf(
@@ -327,7 +339,7 @@ tourism_eu_map <- ggplot(df, aes(fill = values)) +
   theme_void()+
   #more adjustements
   theme(text = element_text(color = "#22211d"), 
-        plot.margin = margin(0, 0.5, 0, 0.5, "cm"),
+        plot.margin = margin(0, 1, 0, 1, "cm"),
         plot.background = element_rect(fill = "#f5f5f2", color = NA),
         panel.background = element_rect(fill = "#f5f5f2", color = NA), 
         legend.background = element_rect(fill = "#f5f5f2", color = NA),
@@ -342,11 +354,11 @@ tourism_eu_map <- ggplot(df, aes(fill = values)) +
         legend.position = "right",
         legend.title = element_text(color = "#4e4d47", size = 10))+
   
-  scale_fill_viridis_c(option = "plasma", direction = -1)+
+  scale_fill_viridis_c(option = "plasma", direction = -1, na.value = "#cacaca")+
   labs(
     title = "Tourism in Europe",
-    subtitle = "Nights spent at tourist accommodation establishments by NUTS 2 regions",
-    fill = "Tens of thousands",
+    subtitle = "Nights spent at tourist accommodation establishments by NUTS 2 regions in 2021",
+    fill = "Legend (x 10,000)",
     caption = paste("Source: Eurostat"))
 
 tourism_eu_map
@@ -354,7 +366,7 @@ tourism_eu_map
 
 </details>
 
-![](assignment_4_files/figure-commonmark/unnamed-chunk-7-1.png)
+![](assignment_4_files/figure-commonmark/unnamed-chunk-8-1.png)
 
 While the default “fill” in the first map worked fine, here, we notice
 that most observations are on the lower end of the spectrum. With only a
@@ -369,44 +381,209 @@ not?
 
 ### From gradient color scheme to classed scale
 
+The map of Europe shown above used an unclassed gradient scale. I will
+now make a map using a classed colour scheme.
+
+First, legend breaks need to be determined and created. I will use the
+[classInt](https://cran.r-project.org/web/packages/classInt/classInt.pdf)
+package to help with this task. I chose to create 6 intervals, allowing
+to giving enough information, while avoiding to overcrowd the legend.
+The method used is the [Jenks natural breaks classification
+method](https://en.wikipedia.org/wiki/Jenks_natural_breaks_optimization).
+It is a convenient method that minimizes the variance within classes,
+while maximizing variance between classes.
+
 <details>
 <summary>Code</summary>
 
 ``` r
-it_users_map2 <- ggplot(users_world_df, aes(fill = diff_users)) +
-  geom_sf() +
+library(classInt)
+library(forcats)
 
-  theme_void()+
-  #more adjustements
-  theme(text = element_text(color = "#22211d"), 
-        plot.background = element_rect(fill = "#f5f5f2", color = NA), 
-        panel.background = element_rect(fill = "#f5f5f2", color = NA), 
-        legend.background = element_rect(fill = "#f5f5f2", color = NA),
-        
-        plot.title = element_text(size= 13, hjust=0.01, color = "#4e4d47",
-                                margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
-        plot.subtitle = element_text(size= 10, hjust=0.01, color = "#4e4d47",
-                                margin = margin(b = -0.1, t = 0.43, l = 2, unit = "cm")),
-        plot.caption = element_text( size=8, color = "#4e4d47", 
-                                 margin = margin(b = 0.3, r=-99, unit = "cm")),
-        legend.position = "right")+
-  
-  scale_fill_viridis_c(option = "plasma")+
-  labs(
-    title = "Change in Internet Adoption Across the World in the 2010s",
-    subtitle = "Difference in internet penetration rates (% of population using the internet) from 2010 to 2021",
-    fill = NULL,
-    caption = paste("Source:", indicator_info$source_org))
+#breaks
+brks <- classIntervals(df$values, n = 6, style = "jenks")$brks
 
-it_users_map2
+#labels (iterate through breaks)
+labels <- c()
+for (i in 1:(length(brks)-1)) {
+    labels <- c(labels, paste0(round(brks[i], 0), "-", round(brks[i + 1], 0)))}
+
+#use cut function to  carve out the categorical variable based on the breaks and labels
+# and replace NAs with "No Data" 
+df <- df %>%
+  mutate(values_classed = cut(values, breaks = brks, labels = labels, include.lowest = T),
+         #!! the variable is FACTOR data so we need to create a new factor
+         values_classed = fct_expand(values_classed, "No Data"),
+         values_classed = fct_explicit_na(values_classed, na_level = "No Data"))
+
+#get colourblind friendly palette for the mapping
+colours <- c("#fff3b0", "#a7d08f","#6ea57f", "#587573", "#4f4365","#440154", "#cacaca")
 ```
 
 </details>
 
-![](assignment_4_files/figure-commonmark/unnamed-chunk-8-1.png)
+Now onto the mapping!
 
-How does the new choice affect the map? Does the original or modified
-approach better represent the data? Why?
+<details>
+<summary>Code</summary>
+
+``` r
+tourism_eu_map_classed <- ggplot() +
+  #fix issue with Kosovo (considered a part of Serbia in the country shp) -> grey base layer 
+  geom_sf(data = filter(eu, CNTR_ID == "RS"),
+          color = "grey20", size = 0.15, fill = "#cacaca") +
+  #make non_eu countries grey b/c no Eurostat data
+  geom_sf(data = non_eu, 
+          color = "grey20", size = 0.125, fill = "#cacaca") +
+  #plot data BUT removing the borders (NUTS2 are too complicated)
+  geom_sf(data = df, aes(fill = values_classed), color = NA, size = 0) +
+  #add country borders (but without filling the polygons)
+  geom_sf(data = eu, color = "grey20", size = 0.125, fill = "transparent") +
+    
+  coord_sf(
+        crs = crsLAEA,
+        xlim = c(bbox["xmin"], bbox["xmax"]),
+        ylim = c(bbox["ymin"], bbox["ymax"])) +
+  
+  scale_fill_manual(
+        name = "Legend (x10,000)",
+        values = colours,
+        drop = F) +
+  
+  theme_void()+
+  #more adjustements
+  theme(text = element_text(color = "#22211d"), 
+        plot.margin = margin(0, 1, 0, 1, "cm"),
+        plot.background = element_rect(fill = "#f5f5f2", color = NA),
+        panel.background = element_rect(fill = "#f5f5f2", color = NA), 
+        legend.background = element_blank(),
+        
+        plot.title = element_text(size= 13, hjust=0.01, color = "#4e4d47",
+                                margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
+        plot.subtitle = element_text(size= 10, hjust=0.01, color = "#4e4d47",
+                                margin = margin(b = 0.5, t = 0.43, l = 2, unit = "cm")),
+        plot.caption = element_text( size=8, color = "#4e4d47", 
+                                 margin = margin(b = 0.3, r=-99, unit = "cm"),
+                                 hjust = 1.4),
+        legend.position = "right",
+        legend.text = element_text(size = 10),
+        legend.title = element_text(color = "#4e4d47", size = 10))+
+  
+  labs(title = "Tourism in Europe",
+       subtitle = "Nights spent at tourist accommodation establishments by NUTS 2 regions in 2021",
+       caption = paste("Source: Eurostat"))
+
+tourism_eu_map_classed
+```
+
+</details>
+
+![](assignment_4_files/figure-commonmark/unnamed-chunk-10-1.png)
+
+A classed color scale allows to make a specific point more easily than
+unclassed color scales. Grouping regions with the same color together
+makes it easier for viewers to understand the statement made by the
+mapper. The focus of such maps is on which data units corresponds to a
+particular predefined class, for example which regions fall into a
+statistical bracket. Another advantage of classed maps is the ability to
+read the value range for the regions correctly, on the contrary of
+unclassed maps where the viewer can only make guessed.
+
+On the other hand, unclassed maps work best to show a general pattern,
+and give a nuance view of the data. An unclassed choropleth is the most
+exact representation of spatial data model possible, so if complexity is
+a goal in the mapping process, an unclassed maps is most likely the
+right choice. Unclassed maps make it easier to see outliers, the
+abruptness of the transition between clusters, and differences between
+neighboring regions.
+
+The classed map above with 6 classes communicates the same message as
+the unclassed map made earlier, but with less nuance. When simply
+mapping the number of nights spent by tourists in each region, the
+priority is on showing general patterns, and the unclassed maps is more
+precise. In this case, the slight gain in readability that is brought by
+the classed map does not offset the loss in nuance.
+
+As a bonus, I will make a map that makes a specific point. From the maps
+above, we can see that some regions host a lot more tourists than the
+others, which have similar values. A classed map with two categories
+could be efficient to give a very simple answer to the question “Which
+regions host the most tourists?”.
+
+<details>
+<summary>Code</summary>
+
+``` r
+# data wrangling: new variable with 2 categories 
+df <- df %>%
+  mutate(values_binary = factor(ifelse(values > 450, "> 450", "< 450")),
+         #!! the variable is FACTOR data so we need to create a new factor
+         values_binary = fct_expand(values_binary, "No Data"),
+         values_binary = fct_explicit_na(values_binary, na_level = "No Data"))
+
+colours2 <- colours <- c("#fff3b0","#440154", "#cacaca")
+
+#map
+tourism_eu_map_classed2 <- ggplot() +
+  #fix issue with Kosovo (considered a part of Serbia in the country shp) -> grey base layer 
+  geom_sf(data = filter(eu, CNTR_ID == "RS"),
+          color = "grey20", size = 0.15, fill = "#cacaca") +
+  #make non_eu countries grey b/c no Eurostat data
+  geom_sf(data = non_eu, 
+          color = "grey20", size = 0.125, fill = "#cacaca") +
+  #plot data BUT removing the borders (NUTS2 are too complicated)
+  geom_sf(data = df, aes(fill = values_binary), color = NA, size = 0) +
+  #add country borders (but without filling the polygons)
+  geom_sf(data = eu, color = "grey20", size = 0.125, fill = "transparent") +
+    
+  coord_sf(
+        crs = crsLAEA,
+        xlim = c(bbox["xmin"], bbox["xmax"]),
+        ylim = c(bbox["ymin"], bbox["ymax"])) +
+  
+  scale_fill_manual(
+        name = "Legend (x10,000)",
+        values = colours,
+        drop = F) +
+  
+  theme_void()+
+  #more adjustements
+  theme(text = element_text(color = "#22211d"), 
+        plot.margin = margin(0, 1, 0, 1, "cm"),
+        plot.background = element_rect(fill = "#f5f5f2", color = NA),
+        panel.background = element_rect(fill = "#f5f5f2", color = NA), 
+        legend.background = element_blank(),
+        
+        plot.title = element_text(size= 13, hjust=0.01, color = "#4e4d47",
+                                margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
+        plot.subtitle = element_text(size= 10, hjust=0.01, color = "#4e4d47",
+                                margin = margin(b = 0.5, t = 0.43, l = 2, unit = "cm")),
+        plot.caption = element_text( size=8, color = "#4e4d47", 
+                                 margin = margin(b = 0.3, r=-99, unit = "cm"),
+                                 hjust = 1.4),
+        legend.position = "right",
+        legend.text = element_text(size = 10),
+        legend.title = element_text(color = "#4e4d47", size = 10))+
+  
+  labs(title = "Where do tourists travel in Europe?",
+       subtitle = "Nights spent at tourist accommodation establishments by NUTS 2 regions in 2021",
+       caption = paste("Source: Eurostat"))
+
+tourism_eu_map_classed2
+```
+
+</details>
+
+![](assignment_4_files/figure-commonmark/unnamed-chunk-11-1.png)
+
+This map shows the outliers, answering efficiently the question asked in
+the title. Tourists seem to be attracted to coastal regions, especially
+around the Mediterranean, Scandinavia and the south of Turkey. Some
+capitals like Paris and Madrid also stand out in this map.
+
+I gathered a lot of information regarding whether or not to use
+unclassed maps from this interesting [Datawrapper
+article](https://blog.datawrapper.de/classed-vs-unclassed-color-scales/).
 
 ### From sequential to divergent scale
 
@@ -421,44 +598,12 @@ approach better represent the data? Why?
 
     [1] 4
 
-How does the new choice affect the map? Does the original or modified
-approach better represent the data? Why?
+“Sequential color scales are gradients that go from bright to dark or
+the other way round. They’re great for visualizing numbers that go from
+low to high, like income, temperature, or age. A medium blue on a white
+background, for example, lets your readers know: “My value is a bit
+higher than the light blue and a bit lower than the dark blue.”
 
-### Bonus map: Change of coordinates
-
-<details>
-<summary>Code</summary>
-
-``` r
-it_users_map2 <- ggplot(users_world_df, aes(fill = diff_users)) +
-  geom_sf() +
-
-  coord_sf(crs = "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +units=m +no_defs ")+
-
-  #more adjustements
-  theme(text = element_text(color = "#22211d"), 
-        plot.background = element_rect(fill = "#f5f5f2", color = NA), 
-        panel.background = element_rect(fill = "#f5f5f2", color = NA), 
-        legend.background = element_rect(fill = "#f5f5f2", color = NA),
-        
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        plot.title = element_text(size= 10, hjust=0.01, color = "#4e4d47",
-                                margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
-        plot.subtitle = element_text(size= 8, hjust=0.01, color = "#4e4d47",
-                                margin = margin(b = -0.1, t = 0.43, l = 2, unit = "cm")),
-        plot.caption = element_text( size=7, color = "#4e4d47"),       
-        legend.position = "right")+
-    scale_fill_viridis_c(option = "plasma")+
-    labs(
-    title = "Change in Internet Adoption Across the World in the 2010s",
-    subtitle = "Difference in internet penetration rates (% of population using the internet) from 2010 to 2021",
-    fill = NULL,
-    caption = paste("Source:", indicator_info$source_org))
-
-it_users_map2
-```
-
-</details>
-
-![](assignment_4_files/figure-commonmark/unnamed-chunk-10-1.png)
+Here is an interesting [Datawrapper
+article](https://blog.datawrapper.de/diverging-vs-sequential-color-scales/)
+about this topic.
