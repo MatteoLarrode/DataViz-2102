@@ -451,7 +451,7 @@ I gathered a lot of information regarding whether or not to use unclassed maps f
 
 I will remake the map of tourism in Europe with a diverging color scale. Using diverging colors is best if there is a meaningful middle value. In this case, I will use the median: 17,000,000. 
 
-```{r}
+```{r, dpi = 150}
 tourism_eu_map_div <- ggplot() +
  #fix issue with Kosovo (considered a part of Serbia in the country shp) -> grey base layer 
   geom_sf(data = filter(eu, CNTR_ID == "RS"),
@@ -527,6 +527,6 @@ density_plot <- ggplot(df, aes(x = values))+
 density_plot
 
 ```
-The conclusion that I reached by observing the difference between the sequential and the diverging map of tourism in Europe is that if the message emphasizes the lowest and highest values, a diverging scale can be a good choice; however, if the story is about the highest (=darkest) values, then a sequential color scale is preferable.
+The conclusion that I reached by observing the difference between the sequential and the diverging map of tourism in Europe is that if the message emphasizes the lowest and highest values, a diverging scale can be a good choice; however, if the story is about the highest (darkest) values, then a sequential color scale is preferable.
 
 Here is an interesting [Datawrapper article](https://blog.datawrapper.de/diverging-vs-sequential-color-scales/) about this topic.

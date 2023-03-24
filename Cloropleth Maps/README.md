@@ -693,7 +693,7 @@ density_plot
 The conclusion that I reached by observing the difference between the
 sequential and the diverging map of tourism in Europe is that if the
 message emphasizes the lowest and highest values, a diverging scale can
-be a good choice; however, if the story is about the highest (=darkest)
+be a good choice; however, if the story is about the highest (darkest)
 values, then a sequential color scale is preferable.
 
 Here is an interesting [Datawrapper
