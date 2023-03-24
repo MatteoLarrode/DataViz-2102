@@ -268,8 +268,9 @@ tourism_eu_map <- ggplot() +
         plot.caption = element_text( size=8, color = "#4e4d47", 
                                  margin = margin(b = 0.3, r=-99, unit = "cm"),
                                  hjust = 1.4),
-        legend.position = "right",
-        legend.title = element_text(color = "#4e4d47", size = 10))+
+        legend.title = element_text(color = "#4e4d47", size = 10),
+        legend.key.height= unit(1.1, 'cm'),
+        legend.key.width= unit(0.3, 'cm'))+
   
   scale_fill_viridis_c(option = "plasma", direction = -1, na.value = "#cacaca")+
   labs(
@@ -485,7 +486,9 @@ tourism_eu_map_div <- ggplot() +
                                  margin = margin(b = 0.3, r=-99, unit = "cm"),
                                  hjust = 1.4),
         legend.position = "right",
-        legend.title = element_text(color = "#4e4d47", size = 10))+
+        legend.title = element_text(color = "#4e4d47", size = 10),
+        legend.key.height= unit(1.1, 'cm'),
+        legend.key.width= unit(0.3, 'cm'))+
   
   # use scale_fill_gradient2() for diverging color scale
   scale_fill_gradient2(low = "#0000AF",mid = "white", high = "#bf3b3b", 
