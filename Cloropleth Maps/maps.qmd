@@ -444,7 +444,7 @@ tourism_eu_map_classed2
 ```
 This map shows the outliers, answering efficiently the question asked in the title. Tourists seem to be attracted to coastal regions, especially around the Mediterranean, Scandinavia and the south of Turkey. Some capitals like Paris and Madrid also stand out in this map. 
 
-A classed color scale allows to make a specific point more easily than unclassed color scales. Grouping regions with the same color together makes it easier for viewers to understand the statement made by the mapper. The focus of such maps is on which data units corresponds to a particular predefined class, for example which regions fall into a statistical bracket.
+A classed color scale allows to make a specific point more easily than its unclassed counterpart. Grouping regions with the same color together makes it easier for viewers to understand the statement made by the mapper. The focus of such maps is on which data units corresponds to a particular predefined class, for example which regions fall into a statistical bracket.
 
 I gathered a lot of information regarding whether or not to use unclassed maps from this interesting [Datawrapper article](https://blog.datawrapper.de/classed-vs-unclassed-color-scales/). 
 
@@ -452,9 +452,6 @@ I gathered a lot of information regarding whether or not to use unclassed maps f
 ### From sequential to diverging scale
 
 I will remake the map of tourism in Europe with a diverging color scale. Using diverging colors is best if there is a meaningful middle value. In this case, I will use the median: 17,000,000. 
-
-
-
 
 ```{r}
 tourism_eu_map_div <- ggplot() +
@@ -505,14 +502,9 @@ tourism_eu_map_div <- ggplot() +
 tourism_eu_map_div
 
 ```
-Usually, diverging color scales are
+Usually, diverging shades let the viewer see more differences in the data than sequential scales. They are ideal for visualizing numbers that go from low to high.
 
-"Sequential color scales are gradients that go from bright to dark or the other way round. They’re great for visualizing numbers that go from low to high, like income, temperature, or age. A medium blue on a white background, for example, lets your readers know: “My value is a bit higher than the light blue and a bit lower than the dark blue.”
-
-
-In this map however, the distribution of data is such that using the median as a middle point is most likely not the rights choice. 
-
-
+In this map however, the distribution of data is such that using the a diverging scale is most likely not the right choice. As shown with the graph below, the data is very heavily positively skewed. Using a different midpoint, or transforming the data might improve the aesthetics and readability of the map, but would change the message transmitted by the map, or could even make it misleading. 
 
 ```{r}
 #| warning: false
@@ -537,4 +529,6 @@ density_plot <- ggplot(df, aes(x = values))+
 density_plot
 
 ```
+The conclusion that I reached by observing the difference between the sequential and the diverging map of tourism in Europe is that if the message emphasizes the lowest and highest values, a diverging scale can be a good choice; however, if the story is about the highest (=darkest) values, then a sequential color scale is preferable.
+
 Here is an interesting [Datawrapper article](https://blog.datawrapper.de/diverging-vs-sequential-color-scales/) about this topic.
