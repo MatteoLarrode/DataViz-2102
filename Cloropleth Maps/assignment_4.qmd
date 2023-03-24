@@ -384,7 +384,7 @@ The classed map above with 6 classes communicates the same message as the unclas
 
 As a bonus, I will make a map that makes a specific point. From the maps above, we can see that some regions host a lot more tourists than the others, which have similar values. A classed map with two categories could be efficient to give a very simple answer to the question "Which regions host the most tourists?". 
 
-```{r}
+```{r, dpi = 150}
 # data wrangling: new variable with 2 categories 
 df <- df %>%
   mutate(values_binary = factor(ifelse(values > 450, "> 450", "< 450")),
