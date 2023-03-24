@@ -373,10 +373,6 @@ that most observations are on the lower end of the spectrum. With only a
 few regions distinguisly higher than the rest. This map would benefit
 from having a legend split into breaks
 
-Describe the patterns in your map. What story are you communicating with
-your map? Does the map effectively communicate your story? Why or why
-not?
-
 ## Alternative Maps
 
 ### From gradient color scheme to classed scale
