@@ -104,7 +104,7 @@ it_users_map <- ggplot(users_world_df, aes(fill = diff_users_abs)) +
         legend.key.height= unit(0.3, 'cm'),
         legend.key.width= unit(1.5, 'cm'))+
   
-  scale_fill_viridis_c(option = "plasma")+
+  scale_fill_viridis_c(option = "magma")+
   labs(title = "Change in Internet Penetration Across the World in the 2010s",
        subtitle = "Absolute change in % of population with access to the Internet from 2010 to 2021",
     fill = NULL,
@@ -177,7 +177,7 @@ of the EU and the UK for the purpose of the socio-economic analyses of
 the regions. We will be using data on the NUTS 2 level, which is the
 statistical unit of approximately 800,000 to 3 million people.
 
-For the spatial data, we will use the [giscoR
+For the spatial data, I used the [giscoR
 package](https://cran.r-project.org/web/packages/giscoR/vignettes/giscoR.html).
 This package provides an easy interaction with the GISCO API, which
 gives access to a database containing core geographical data covering
@@ -369,10 +369,9 @@ tourism_eu_map
 
 ![](maps_files/figure-commonmark/unnamed-chunk-8-1.png)
 
-While the default “fill” in the first map worked fine, here, we notice
-that most observations are on the lower end of the spectrum. With only a
-few regions distinguisly higher than the rest. This map would benefit
-from having a legend split into breaks
+We notice that most observations are on the lower end of the spectrum.
+With only a few regions distinguisly higher than the rest. This map
+would benefit from having a legend split into breaks
 
 ## Alternative Maps
 
@@ -381,11 +380,11 @@ from having a legend split into breaks
 The map of Europe shown above used an unclassed gradient scale. I will
 now make a map using a classed colour scheme.
 
-First, legend breaks need to be determined and created. I will use the
+First, legend breaks need to be determined and created. I used the
 [classInt](https://cran.r-project.org/web/packages/classInt/classInt.pdf)
 package to help with this task. I chose to create 6 intervals, allowing
-to giving enough information, while avoiding to overcrowd the legend.
-The method used is the [Jenks natural breaks classification
+to give enough information, while avoiding to overcrowd the legend. The
+method used is the [Jenks natural breaks classification
 method](https://en.wikipedia.org/wiki/Jenks_natural_breaks_optimization).
 It is a convenient method that minimizes the variance within classes,
 while maximizing variance between classes.
@@ -483,9 +482,9 @@ the viewer can only make guesses.
 
 On the other hand, unclassed maps work best to show a general pattern,
 and give a nuance view of the data. An unclassed choropleth is the most
-exact representation of spatial data model possible, so if complexity is
-a goal in the mapping process, an unclassed maps is most likely the
-right choice. Unclassed maps make it easier to see outliers, the
+exact representation of spatial data model possible, so if precision is
+the main goal in the mapping process, an unclassed maps is most likely
+the right choice. Unclassed maps make it easier to see outliers, the
 abruptness of the transition between clusters, and differences between
 neighboring regions.
 
@@ -503,10 +502,10 @@ better insight and precision on the data, but can confuse inattentive or
 uninformed viewers.
 
 As a bonus, I will make a map that makes a specific point. From the maps
-above, we can see that some regions host a lot more tourists than the
-others, which have similar values. A classed map with two categories
-could be efficient to give a very simple answer to the question “Which
-regions host the most tourists?”.
+above, we can see that some regions host a lot more tourists than most
+others. A classed map with two categories could be efficient to give a
+very simple answer to the question “Which regions host the most
+tourists?”.
 
 <details>
 <summary>Code</summary>
@@ -594,7 +593,7 @@ article](https://blog.datawrapper.de/classed-vs-unclassed-color-scales/).
 
 I will remake the map of tourism in Europe with a diverging color scale.
 Using diverging colors is best if there is a meaningful middle value. In
-this case, I will use the median: 17,000,000.
+this case, I will use the median: 17,000,000 nights.
 
 <details>
 <summary>Code</summary>
@@ -661,9 +660,9 @@ go from low to high.
 In this map however, the distribution of data is such that using the a
 diverging scale is most likely not the right choice. As shown with the
 graph below, the data is very heavily positively skewed. Using a
-different midpoint, or transforming the data might improve the
-aesthetics and readability of the map, but would change the message
-transmitted by the map, or could even make it misleading.
+different midpoint or transforming the data might improve the aesthetics
+and readability of the map, but would change the message transmitted, or
+could even make it misleading.
 
 <details>
 <summary>Code</summary>
@@ -693,11 +692,11 @@ density_plot
 
 ![](maps_files/figure-commonmark/unnamed-chunk-13-1.png)
 
-The conclusion that I reached by observing the difference between the
-sequential and the diverging map of tourism in Europe is that if the
+The conclusion that I reached by observing the differences between the
+sequential and the diverging maps of tourism in Europe is that if the
 message emphasizes the lowest and highest values, a diverging scale can
 be a good choice; however, if the story is about the highest (darkest)
-values, then a sequential color scale is preferable.
+values, then a sequential color scale is most likely preferable.
 
 Here is an interesting [Datawrapper
 article](https://blog.datawrapper.de/diverging-vs-sequential-color-scales/)
