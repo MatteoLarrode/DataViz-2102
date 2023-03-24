@@ -115,7 +115,7 @@ it_users_map
 
 </details>
 
-![](assignment_4_files/figure-commonmark/unnamed-chunk-3-1.png)
+![](maps_files/figure-commonmark/unnamed-chunk-3-1.png)
 
 This first map displays changes in Internet penetration rates throughout
 the world in the 2010s. It uses a sequential, gradient color scheme,
@@ -366,7 +366,7 @@ tourism_eu_map
 
 </details>
 
-![](assignment_4_files/figure-commonmark/unnamed-chunk-8-1.png)
+![](maps_files/figure-commonmark/unnamed-chunk-8-1.png)
 
 While the default “fill” in the first map worked fine, here, we notice
 that most observations are on the lower end of the spectrum. With only a
@@ -478,7 +478,7 @@ tourism_eu_map_classed
 
 </details>
 
-![](assignment_4_files/figure-commonmark/unnamed-chunk-10-1.png)
+![](maps_files/figure-commonmark/unnamed-chunk-10-1.png)
 
 A classed color scale allows to make a specific point more easily than
 unclassed color scales. Grouping regions with the same color together
@@ -574,7 +574,7 @@ tourism_eu_map_classed2
 
 </details>
 
-![](assignment_4_files/figure-commonmark/unnamed-chunk-11-1.png)
+![](maps_files/figure-commonmark/unnamed-chunk-11-1.png)
 
 This map shows the outliers, answering efficiently the question asked in
 the title. Tourists seem to be attracted to coastal regions, especially
