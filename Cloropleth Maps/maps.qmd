@@ -94,7 +94,7 @@ it_users_map <- ggplot(users_world_df, aes(fill = diff_users_abs)) +
   labs(title = "Change in Internet Penetration Across the World in the 2010s",
        subtitle = "Absolute change in % of population with access to the Internet from 2010 to 2021",
     fill = NULL,
-    caption = paste("Source:", indicator_info$source_org))
+    caption = paste("Source:", indicator_info$source_org, " | @matteoStats"))
 
 it_users_map
 
@@ -276,7 +276,7 @@ tourism_eu_map <- ggplot() +
     title = "Tourism in Europe",
     subtitle = "Nights spent at tourist accommodation establishments by NUTS 2 regions in 2021",
     fill = "Legend (x 10,000)",
-    caption = paste("Source: Eurostat"))
+    caption = paste("Source: Eurostat | @matteoStats"))
 
 tourism_eu_map
 
@@ -367,19 +367,19 @@ tourism_eu_map_classed <- ggplot() +
   
   labs(title = "Tourism in Europe",
        subtitle = "Nights spent at tourist accommodation establishments by NUTS 2 regions in 2021",
-       caption = paste("Source: Eurostat"))
+       caption = paste("Source: Eurostat | @matteoStats"))
 
 tourism_eu_map_classed
 
 ```
 
-
-
-A classed color scale allows to make a specific point more easily than unclassed color scales. Grouping regions with the same color together makes it easier for viewers to understand the statement made by the mapper. The focus of such maps is on which data units corresponds to a particular predefined class, for example which regions fall into a statistical bracket. Another advantage of classed maps is the ability to read the value range for the regions correctly, on the contrary of unclassed maps where the viewer can only make guessed.
+The main advantage of classed maps is the ability to read the value range for the regions correctly, on the contrary of unclassed maps where the viewer can only make guesses.
 
 On the other hand, unclassed maps work best to show a general pattern, and give a nuance view of the data. An unclassed choropleth is the most exact representation of spatial data model possible, so if complexity is a goal in the mapping process, an unclassed maps is most likely the right choice. Unclassed maps make it easier to see outliers, the abruptness of the transition between clusters, and differences between neighboring regions.
 
 The classed map above with 6 classes communicates the same message as the unclassed map made earlier, but with less nuance. When simply mapping the number of nights spent by tourists in each region, the priority is on showing general patterns, and the unclassed maps is more precise. In this case, the slight gain in readability that is brought by the classed map does not offset the loss in nuance. 
+
+Moreover, because of the distribution of the data, the categories differ strongly in their intervals. The first category has a range of 140 while the last one has a range of around 700. These differences allow to gain better insight and precision on the data, but can confuse inattentive or uninformed viewers.  
 
 As a bonus, I will make a map that makes a specific point. From the maps above, we can see that some regions host a lot more tourists than the others, which have similar values. A classed map with two categories could be efficient to give a very simple answer to the question "Which regions host the most tourists?". 
 
@@ -437,22 +437,104 @@ tourism_eu_map_classed2 <- ggplot() +
   
   labs(title = "Where do tourists travel in Europe?",
        subtitle = "Nights spent at tourist accommodation establishments by NUTS 2 regions in 2021",
-       caption = paste("Source: Eurostat"))
+       caption = paste("Source: Eurostat | @matteoStats"))
 
 tourism_eu_map_classed2
 
 ```
 This map shows the outliers, answering efficiently the question asked in the title. Tourists seem to be attracted to coastal regions, especially around the Mediterranean, Scandinavia and the south of Turkey. Some capitals like Paris and Madrid also stand out in this map. 
 
+A classed color scale allows to make a specific point more easily than unclassed color scales. Grouping regions with the same color together makes it easier for viewers to understand the statement made by the mapper. The focus of such maps is on which data units corresponds to a particular predefined class, for example which regions fall into a statistical bracket.
+
 I gathered a lot of information regarding whether or not to use unclassed maps from this interesting [Datawrapper article](https://blog.datawrapper.de/classed-vs-unclassed-color-scales/). 
 
 
-### From sequential to divergent scale
+### From sequential to diverging scale
+
+I will remake the map of tourism in Europe with a diverging color scale. Using diverging colors is best if there is a meaningful middle value. In this case, I will use the median: 17,000,000. 
+
+
+
 
 ```{r}
-2 * 2
+tourism_eu_map_div <- ggplot() +
+ #fix issue with Kosovo (considered a part of Serbia in the country shp) -> grey base layer 
+  geom_sf(data = filter(eu, CNTR_ID == "RS"),
+          color = "grey20", size = 0.15, fill = "#cacaca") +
+  #make non_eu countries grey b/c no Eurostat data
+  geom_sf(data = non_eu, 
+          color = "grey20", size = 0.125, fill = "#cacaca") +
+  #plot data BUT removing the borders (NUTS2 are too complicated)
+  geom_sf(data = df, aes(fill = values), color = NA, size = 0) +
+  #add country borders (but without filling the polygons)
+  geom_sf(data = eu, color = "grey20", size = 0.125, fill = "transparent") +
+  
+  coord_sf(
+        crs = crsLAEA,
+        xlim = c(bbox["xmin"], bbox["xmax"]),
+        ylim = c(bbox["ymin"], bbox["ymax"])) +
+  
+  theme_void()+
+  #more adjustements
+  theme(text = element_text(color = "#22211d"), 
+        plot.margin = margin(0, 1, 0, 1, "cm"),
+        plot.background = element_rect(fill = "#f5f5f2", color = NA),
+        panel.background = element_rect(fill = "#f5f5f2", color = NA), 
+        legend.background = element_rect(fill = "#f5f5f2", color = NA),
+        
+        plot.title = element_text(size= 13, hjust=0.01, color = "#4e4d47",
+                                margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
+        plot.subtitle = element_text(size= 10, hjust=0.01, color = "#4e4d47",
+                                margin = margin(b = 0.5, t = 0.43, l = 2, unit = "cm")),
+        plot.caption = element_text( size=8, color = "#4e4d47", 
+                                 margin = margin(b = 0.3, r=-99, unit = "cm"),
+                                 hjust = 1.4),
+        legend.position = "right",
+        legend.title = element_text(color = "#4e4d47", size = 10))+
+  
+  # use scale_fill_gradient2() for diverging color scale
+  scale_fill_gradient2(low = "#2a5674",mid = "white", high = "#bf3b3b", 
+                       midpoint = 170,
+                       na.value = "#cacaca") + 
+  
+  labs(title = "Tourism in Europe",
+       subtitle = "Nights spent at tourist accommodation establishments by NUTS 2 regions in 2021",
+       fill = "Legend (x 10,000)",
+       caption = paste("Source: Eurostat | @matteoStats"))
+
+tourism_eu_map_div
+
 ```
+Usually, diverging color scales are
 
 "Sequential color scales are gradients that go from bright to dark or the other way round. They’re great for visualizing numbers that go from low to high, like income, temperature, or age. A medium blue on a white background, for example, lets your readers know: “My value is a bit higher than the light blue and a bit lower than the dark blue.”
 
+
+In this map however, the distribution of data is such that using the median as a middle point is most likely not the rights choice. 
+
+
+
+```{r}
+#| warning: false
+
+density_plot <- ggplot(df, aes(x = values))+
+  geom_density(col = "#5b92e5")+
+  
+  theme(text=element_text(family="Roboto"),
+        panel.background = element_blank(),
+        plot.margin = unit(c(0, 0.5, 0.5, 1), "cm"),
+        plot.title=element_text(hjust=0.5, face="bold", size=12, margin = margin(b=10)),
+        plot.caption = element_text(size=9, vjust = -2),
+        axis.title.x = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_line(color = "gray", linetype = "dashed", linewidth = 0.2))+
+  scale_y_continuous(name = element_text("Density"))+
+  scale_fill_discrete(guide = "none")+
+  labs(title = "Nights spent at tourist accommodation establishments in 2021 (x10,000)",
+       caption="Source: Eurostat | @matteoStats")
+
+
+density_plot
+
+```
 Here is an interesting [Datawrapper article](https://blog.datawrapper.de/diverging-vs-sequential-color-scales/) about this topic.
