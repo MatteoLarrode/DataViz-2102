@@ -44,7 +44,7 @@ vote shares.
 <summary>Code</summary>
 
 ``` r
-table1 <- kbl(vote_80_16)
+table1 <- kbl(vote_80_16, format = "html")
 
 table1
 ```

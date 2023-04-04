@@ -34,7 +34,7 @@ vote_80_16 <- left_join(dem_share_80_16, vote_2020, by = "state") %>%
 Here is a table of summary statistics for the 2016 and 2020 Democratic vote shares.
 
 ```{r}
-table1 <- kbl(vote_80_16)
+table1 <- kbl(vote_80_16, format = "html")
 
 table1
 
