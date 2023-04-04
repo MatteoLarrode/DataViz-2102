@@ -44,13 +44,14 @@ vote shares.
 <summary>Code</summary>
 
 ``` r
-table1 <- kbl(vote_80_16, format = "html")
+table1 <- kbl(vote_80_16, format = "html")%>%
+  kable_styling()
 
 table1
 ```
 
 </details>
-<table>
+<table class="table" style="margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
    <th style="text-align:left;"> state </th>
