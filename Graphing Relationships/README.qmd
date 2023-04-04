@@ -1,0 +1,67 @@
+---
+title: "Assignment #5 - Graphing Realtionships"
+author: "Matteo Larrode"
+format: 
+  gfm:
+    code-fold: true
+editor: visual
+---
+
+## Question 1: 2016 and 2020 Democratic vote shares
+
+Let's first load the packages we will need for this question
+
+```{r}
+#| output: false
+library(tidyverse)
+
+```
+
+1) Left join the 2020 election data we used in challenge 7_1 (“us_vote_2020.csv”) to the 1980-2016 data frame. It is also posted on the assignment page. Create a dempct2020 variable using the dem_votes and rep_votes variables and a mutate statement. [Political science aside: what we call the “two party vote” limits the analysis to votes for Democrats and Republicans only.]
+
+```{r}
+
+```
+
+2) Create a table of summary statistics for the 2016 and 2020 Democratic vote shares. Describe the overall pattern, in one sentence.
+
+
+## Question 2
+
+Using the data from 1, generate a vote swing scatter plot with the 2020 Democratic percentage of the vote on the Y axis and the 2016 Democratic percentage of the vote on the X axis, labeling the points with the state names, and adding a 45 degree line to the plot using geom_abline().
+Describe your graph. What is is overall pattern in the data?
+What challenges are created by labeling the states? Try labeling only some of the states, justifying your choice of states.
+Are there unusual states in the plot? If so, which ones?
+Make a graph that omits Washington D.C. from the data. What effect does that have on the structure of the graph?
+
+
+```{r}
+
+```
+
+
+## Question 3
+
+Again using the data from 1, filter out Washington D.C., reshape the data from wide form to long form using pivot_longer() and generate a line plot for the 50 states from 1980 to 2020, graphing percent Democratic on the y-axis and year on the x-axis. Choose a set of states that you find interesting, and emphasize those states using colors.
+Describe the overall patterns in the data over time. What central features are particularly noteworthy, and why?
+What story are you telling with your use of color to highlight a set of states?
+Remember that in section 7.1, Healy faceted his election graph by the four census regions. Generate a second graph structured as before, this time faceting by census region.
+
+```{r}
+
+
+```
+
+
+## Question 4: Final Project Data
+
+Now using some data that you would like to use in your final project, answer the following:
+Describe in detail the source of your data.
+What question do you want to ask? That is, what is your research question, or, put differently, what question will your graph answer?
+Create a scatterplot (or alternative graph, as appropriate) that illustrates the relationship between your outcome of interest and your main independent variable of interest. Describe the graph in a paragraph. What story does the graph convey?
+
+
+```{r, dpi = 150}
+
+
+```
