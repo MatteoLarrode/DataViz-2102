@@ -5,7 +5,6 @@ format:
   gfm:
     code-fold: true
     prefer-html: true
-editor: visual
 ---
 
 ## Question 1: 2016 and 2020 Democratic vote shares
