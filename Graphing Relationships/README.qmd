@@ -4,26 +4,45 @@ author: "Matteo Larrode"
 format: 
   gfm:
     code-fold: true
+    prefer-html: true
 editor: visual
 ---
 
 ## Question 1: 2016 and 2020 Democratic vote shares
 
-Let's first load the packages we will need for this question
+Let's first load the packages and data we will need for this question
 
 ```{r}
 #| output: false
 library(tidyverse)
+library(haven)
+library(kableExtra)
+
+vote_2020 <- read_csv("data/us_vote_2020.csv")
+dem_share_80_16 <- read_dta("data/leipvote1980_2016wide.dta")
 
 ```
 
-1) Left join the 2020 election data we used in challenge 7_1 (“us_vote_2020.csv”) to the 1980-2016 data frame. It is also posted on the assignment page. Create a dempct2020 variable using the dem_votes and rep_votes variables and a mutate statement. [Political science aside: what we call the “two party vote” limits the analysis to votes for Democrats and Republicans only.]
+Now I join the 2020 election data to democratic votes shares of the two party vote, from 1980 to 2016 to the 1980-2016.
 
 ```{r}
 
+vote_80_16 <- left_join(dem_share_80_16, vote_2020, by = "state") %>%
+  mutate(pctdem2020 = dem_percent)
+
 ```
 
-2) Create a table of summary statistics for the 2016 and 2020 Democratic vote shares. Describe the overall pattern, in one sentence.
+Here is a table of summary statistics for the 2016 and 2020 Democratic vote shares.
+
+```{r}
+table1 <- kbl(vote_80_16)
+
+table1
+
+
+```
+
+Describe the overall pattern, in one sentence.
 
 
 ## Question 2
