@@ -8,7 +8,7 @@ Matteo Larrode
 
 ## Question 1: 2016 and 2020 Democratic vote shares
 
-Let’s first load the packages and data we will need for this question
+Let’s first load the packages and data we will need for this assignment
 
 <details>
 <summary>Code</summary>
@@ -18,6 +18,8 @@ library(tidyverse)
 library(haven)
 library(kableExtra) #table
 library(psych) #describe function
+library(ggplot2)
+library(ggrepel) #labeling state names
 
 vote_2020 <- read_csv("data/us_vote_2020.csv")
 dem_share_80_16 <- read_dta("data/leipvote1980_2016wide.dta")
@@ -108,25 +110,160 @@ table1
 </table>
 
 We can see that there was a slight increase, on average, in the
-percentage of the two-party vote that went to Democratic presidential
-candidates from 2016 to 2020. The mean percentage increased from 47.99%
-in 2016 to 48.65% in 2020, and the minimum percentage increased too. The
-range decreased by more than 5 percentage points, suggesting that there
-was slightly less variability in the percentage of the two-party vote
-that went to the Democratic presidential candidate across all states in
-2020 compared to 2016.
+percentage of the two-party vote that went to the Democratic
+presidential candidate from 2016 to 2020. The mean percentage increased
+from 47.99% in 2016 to 48.65% in 2020, and the minimum percentage
+increased too. The standard deviation and range decreased as well,
+suggesting that there was slightly less variability in the percentage of
+the two-party vote that went to the Democratic presidential candidate
+across all states in 2020 compared to 2016.
 
-## Question 2
+## Question 2: Scatter plot
 
-Using the data from 1, generate a vote swing scatter plot with the 2020
-Democratic percentage of the vote on the Y axis and the 2016 Democratic
-percentage of the vote on the X axis, labeling the points with the state
-names, and adding a 45 degree line to the plot using geom_abline().
-Describe your graph. What is is overall pattern in the data? What
-challenges are created by labeling the states? Try labeling only some of
-the states, justifying your choice of states. Are there unusual states
-in the plot? If so, which ones? Make a graph that omits Washington D.C.
-from the data. What effect does that have on the structure of the graph?
+Now let us generate the vote swing scatter plot with the 2020 Democratic
+percentage of the vote on the Y axis and the 2016 Democratic percentage
+of the vote on the X axis.
+
+<details>
+<summary>Code</summary>
+
+``` r
+plot1 <- ggplot(vote16_20, aes(x = pctdem2016*100, y = pctdem2020*100)) +
+  geom_point() +
+  geom_text_repel(aes(label = state),
+                  max.overlaps = Inf) +
+  theme(text=element_text(family="Roboto"),
+        panel.background = element_blank(),
+        plot.margin = unit(c(0, 0.5, 0.5, 0.5), "cm"),
+        plot.title=element_text(hjust=0.5, face="bold", size=12, margin = margin(b=10)),
+        plot.caption = element_text(size=9, vjust = -2),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_line(color = "gray", linetype = "dashed", linewidth = 0.2))+
+  labs(x = "2016 Democratic Vote %", 
+       y = "2020 Democratic Vote %",
+       title = "Vote for the Democratic Presidential Candidate in 2016 and 2020",
+       caption = "@matteoStats") + # axis labels
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") # add 45 degree line
+
+
+plot1
+```
+
+</details>
+
+![](README_files/figure-commonmark/unnamed-chunk-4-1.png)
+
+Even using the {ggrepel} package to label state names, the plot is too
+crowded! In order to be able to read and describe the graph, let us try
+labeling only 10 states. To bring more insight on states that
+experienced change, I will choose those with the highest difference
+between 2016 and 2020.
+
+<details>
+<summary>Code</summary>
+
+``` r
+vote16_20_new <- vote16_20 %>%
+  mutate(pct_diff = abs(pctdem2020 - pctdem2016),
+         #use rank function
+         top_10 = ifelse(rank(desc(pct_diff)) <= 10, TRUE, FALSE))
+```
+
+</details>
+
+Now let us plot the new graph, with less state labels.
+
+<details>
+<summary>Code</summary>
+
+``` r
+plot2 <- ggplot(vote16_20_new, aes(x = pctdem2016*100, y = pctdem2020*100, col = top_10)) +
+  geom_point() +
+  geom_text_repel(data = filter(vote16_20_new, top_10),
+                  aes(label = state),
+                  #get labels away from the points
+                  position = position_nudge_repel(y = 1)) +
+  theme(text=element_text(family="Roboto"),
+        panel.background = element_blank(),
+        plot.margin = unit(c(0, 0.5, 0.5, 0.5), "cm"),
+        plot.title=element_text(hjust=0.5, face="bold", size=12, margin = margin(b=10)),
+        plot.caption = element_text(size=9, vjust = -2),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_line(color = "gray", linetype = "dashed", linewidth = 0.2),
+        legend.position = "none")+
+  scale_color_manual(values = c("grey", "black"))+
+  labs(x = "2016 Democratic Vote %", 
+       y = "2020 Democratic Vote %",
+       title = "Vote for the Democratic Presidential Candidate in 2016 and 2020",
+       caption = "@matteoStats") + # axis labels
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") # add 45 degree line
+
+
+plot2
+```
+
+</details>
+
+![](README_files/figure-commonmark/unnamed-chunk-6-1.png)
+
+The points above the 45-degree line indicate a gain in Democratic votes
+between 2016 and 2020, while points below the line indicate a loss in
+Democratic votes. From the plot, we can see that most states had a
+higher percentage of Democratic votes in 2020 compared to 2016, as
+indicated by the majority of points above the 45-degree line. Some
+notable exceptions include California, and Hawaii, where the Democratic
+vote share decreased from 2016 to 2020.
+
+The choice of states to label does leave out some information. For
+example, it is interesting to note that some traditionally Republican
+states, such as Arizona and Georgia, had a significant gain in
+Democratic votes in 2020. Overall, this plot provides a useful visual
+representation of the changing political landscape in the United States
+between the 2016 and 2020 presidential elections.
+
+At the top-right corner of the plot, the state of DC seems like an
+outlier. For both 2016 and 2020, it has a much higher percentage of vote
+for the Democrat candidate than the other states. Let us try to omit
+this state for the next plot.
+
+<details>
+<summary>Code</summary>
+
+``` r
+plot3 <- ggplot(data = filter(vote16_20_new, state != "District of Columbia"),
+                aes(x = pctdem2016*100, y = pctdem2020*100, col = top_10)) +
+  geom_point() +
+  geom_text_repel(data = filter(vote16_20_new, top_10 & state != "District of Columbia"),
+                  aes(label = state),
+                  #get labels away from the points
+                  position = position_nudge_repel(y = 1)) +
+  theme(text=element_text(family="Roboto"),
+        panel.background = element_blank(),
+        plot.margin = unit(c(0, 0.5, 0.5, 0.5), "cm"),
+        plot.title=element_text(hjust=0.5, face="bold", size=12, margin = margin(b=10)),
+        plot.caption = element_text(size=9, vjust = -2),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_line(color = "gray", linetype = "dashed", linewidth = 0.2),
+        legend.position = "none")+
+  scale_color_manual(values = c("grey", "black"))+
+  labs(x = "2016 Democratic Vote %", 
+       y = "2020 Democratic Vote %",
+       title = "Vote for the Democratic Presidential Candidate in 2016 and 2020 (without DC)",
+       caption = "@matteoStats") + # axis labels
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") # add 45 degree line
+
+
+plot3
+```
+
+</details>
+
+![](README_files/figure-commonmark/unnamed-chunk-7-1.png)
+
+The effect of removing D.C. is that the points of the scatter plot are
+less tightly clustered. Removing the outlier that is DC helps to get a
+clearer view of the evolution of the vote for the Democrat candidate
+between 2016 and 2020 in the other states.
 
 ## Question 3
 
