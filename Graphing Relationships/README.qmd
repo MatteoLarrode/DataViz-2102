@@ -13,9 +13,11 @@ Let's first load the packages and data we will need for this question
 
 ```{r}
 #| output: false
+
 library(tidyverse)
 library(haven)
-library(kableExtra)
+library(kableExtra) #table
+library(psych) #describe function
 
 vote_2020 <- read_csv("data/us_vote_2020.csv")
 dem_share_80_16 <- read_dta("data/leipvote1980_2016wide.dta")
@@ -27,23 +29,37 @@ Now I join the 2020 election data to democratic votes shares of the two party vo
 ```{r}
 
 vote_80_16 <- left_join(dem_share_80_16, vote_2020, by = "state") %>%
-  mutate(pctdem2020 = dem_percent)
+  mutate(pctdem2020 = dem_percent / 100)
+
+vote16_20 <- vote_80_16 %>%
+  select(state, stateid, pctdem2016, pctdem2020)
 
 ```
 
 Here is a table of summary statistics for the 2016 and 2020 Democratic vote shares.
 
 ```{r}
-table1 <- kbl(vote_80_16, format = "html")%>%
-  kable_styling()
+summary_stats <- describe(vote16_20[ , c('pctdem2016', 'pctdem2020')], fast = TRUE) %>%
+  as.data.frame() %>%
+  select(-vars) %>%
+  mutate(across(-n, ~ . * 100))
+  
+
+rownames(summary_stats) <- c("2016", "2020")
+
+   
+
+
+# Create HTML table
+table1 <- kbl(summary_stats, format = "html", align = "c", caption = "Summary Statistics for Democratic Vote Shares (2016-2020)") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), 
+                full_width = F,
+                fixed_thead = T)
 
 table1
-
-
 ```
 
-Describe the overall pattern, in one sentence.
-
+We can see that there was a slight increase, on average, in the percentage of the two-party vote that went to Democratic presidential candidates from 2016 to 2020. The mean percentage increased from 47.99% in 2016 to 48.65% in 2020, and the minimum percentage increased too. The range decreased by more than 5 percentage points, suggesting that there was slightly less variability in the percentage of the two-party vote that went to the Democratic presidential candidate across all states in 2020 compared to 2016.
 
 ## Question 2
 
