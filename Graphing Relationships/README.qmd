@@ -30,10 +30,10 @@ Now I join the 2020 election data to democratic votes shares of the two party vo
 
 ```{r}
 
-vote_80_16 <- left_join(dem_share_80_16, vote_2020, by = "state") %>%
+vote_80_20 <- left_join(dem_share_80_16, vote_2020, by = "state") %>%
   mutate(pctdem2020 = dem_percent / 100)
 
-vote16_20 <- vote_80_16 %>%
+vote16_20 <- vote_80_20 %>%
   select(state, stateid, pctdem2016, pctdem2020)
 
 ```
@@ -170,16 +170,149 @@ The effect of removing Washington D.C. is that the points of the scatter plot ar
 
 ## Question 3
 
-Again using the data from 1, filter out Washington D.C., reshape the data from wide form to long form using pivot_longer() and generate a line plot for the 50 states from 1980 to 2020, graphing percent Democratic on the y-axis and year on the x-axis. Choose a set of states that you find interesting, and emphasize those states using colors.
-Describe the overall patterns in the data over time. What central features are particularly noteworthy, and why?
-What story are you telling with your use of color to highlight a set of states?
-Remember that in section 7.1, Healy faceted his election graph by the four census regions. Generate a second graph structured as before, this time faceting by census region.
+From our data on democratic vote from 1980 to 2020, we filter out Washington D.C., and reshape the data from wide form to long form. 
 
 ```{r}
+vote_80_20_new <- vote_80_20 %>%
+  filter(state != "District of Columbia") %>%
+  pivot_longer(cols = starts_with("pctdem"), 
+               names_to = "Year", 
+               values_to = "vote_pct")%>%
+  select(state, stateid, Year, vote_pct)%>%
+  mutate(Year = str_extract(Year, "\\d{4}")) %>%
+  print(n = 15)
+```
+Now, we can generate a line plot for the 50 states from 1980 to 2020, graphing percent Democratic on the y-axis and year on the x-axis. To bring more insight, we will emphasize the 5 states with the highest variation, using standard deviation.
+
+A bit of setup is necessary first. 
+
+```{r}
+#selection of the colors for highlighted lines
+highlight_colors <- c("#17648d", "#51bec7","#008c8f","#d6ab63", "#843844")
+
+#find the highest and lowest averages
+state_sd <- vote_80_20_new %>%
+  group_by(state)%>%
+  summarize(sd = sd(vote_pct))
+
+#selection of 6 states
+names(highlight_colors) <- c('West Virginia', 
+                             'Vermont', 
+                             'New Hampshire',
+                             'Hawaii',
+                             'Arkansas')
 
 
+#new data frame with only those 5 focus areas
+highlight_data <- vote_80_20_new %>%
+  filter(state %in% names(highlight_colors))
 ```
 
+Now on to the plotting! 
+
+```{r, dpi = 150}
+
+plot4 <- ggplot(vote_80_20_new, aes(x = Year, y = vote_pct, group = state)) +
+  geom_line(linewidth = 0.75, color = '#d4dddd') +
+  geom_line(data = highlight_data, aes(color = state), linewidth = 1.25) + 
+  
+  labs(title = "Democratic vote share by state for every Presidential election (1980 - 2020), \n excluding Washington D.C.",
+       caption = "@matteoStats",
+       x = NULL,
+       y = NULL)+
+  
+  scale_y_continuous(position = "right",
+                     labels = scales::percent_format())+
+  scale_colour_manual(values = highlight_colors) + 
+  
+  theme(aspect.ratio = 3.2/6,
+        text = element_text(family = "Roboto Condensed"),
+        plot.margin = margin(t = 0, r = 0.75, b = 0, l = 0.75, unit = "cm"),
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(color = "#dcdbd8"),
+        panel.grid.minor.y = element_blank(),
+        legend.text = element_text(margin = margin(l=3), size = 10),
+        legend.title = element_blank(),
+        legend.position = c(0.15, 0.9),
+        legend.key.width = unit(25,"pt"),
+        legend.key.height = unit(15, "pt"),
+        legend.key = element_blank(),
+        axis.text = element_text(size = 9, color = "gray8"),
+        axis.line.x  = element_line(color = "gray8"),
+        axis.ticks.y = element_blank(),
+        plot.title = element_text(size = 14, hjust = 0.5, face = "bold"),
+        plot.caption = element_text(hjust = 1, size = 11, colour = "#4B4B4B"))
+
+plot4
+```
+Many lines in the plot seem to generally show a gradual increase in the percentage of Democratic voters over time; however, this does not necessarily mean that voting is becoming more Democratic. In fact, the data could suggest a growing polarization between Democratic and Republican voters. This is particularly evident when observing the widening of the spread of Democratic vote share over the years, at the national level.
+
+There are some notable spikes and dips in the lines, indicating abrupt changes in voting patterns. For example, many states experienced an important increase in Democratic voters in the 1990s, and a subsequent decrease at the turn of the millennium.
+
+The lines for each state are generally quite flat, indicating that the percentage of Democratic voters does not vary greatly within states over time, with some states that consistently vote more, or less, Democratic others.
+
+This leads me to the story told by my choice to highlight the states with the highest standard deviation in democratic voting share. A state with a high standard deviation indicates that it experiences more variability in the percentage of Democratic voters across time, compared to states with lower standard deviations. Those highlighted states go through noteworthy changes in demographics or political attitudes over time, leading to more variability in the percentage of Democratic voters. Identifying those states is especially important in the United States, due to its voting system. States with high standard deviation are potentially more competitive in elections, with voters more likely to switch between Democratic and Republican candidates, having major implications for election strategies and the allocation of campaign resources by political parties.
+
+
+Now let's try faceting the graph by census region. 
+
+```{r, dpi = 150}
+#install.packages("usa")
+library(usa)
+
+usa_region <- usa::states %>%
+  select(name, region)
+
+#attach census region to dataset
+vote_80_20_new <- left_join(vote_80_20_new, usa_region, by = c("state" = "name"))
+
+highlight_data <- vote_80_20_new %>%
+  filter(state %in% names(highlight_colors))
+
+#plot
+plot5 <- ggplot(vote_80_20_new, aes(x = Year, y = vote_pct, group = state)) +
+  geom_line(linewidth = 0.5, color = '#d4dddd') +
+  geom_line(data = highlight_data, aes(color = state), linewidth = 1) + 
+  
+  labs(title = "Democratic vote share by state for every Presidential election (1980 - 2020), \n excluding Washington D.C.",
+       caption = "@matteoStats",
+       x = NULL,
+       y = NULL)+
+  
+  scale_y_continuous(position = "right",
+                     labels = scales::percent_format())+
+  scale_colour_manual(values = highlight_colors) + 
+  
+  facet_wrap(~ region, ncol=2) +
+
+  
+  theme(aspect.ratio = 3.2/6,
+        text = element_text(family = "Roboto Condensed"),
+        plot.margin = margin(t = 0, r = 0.5, b = 0, l = 0.5, unit = "cm"),
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(color = "#dcdbd8"),
+        panel.grid.minor.y = element_blank(),
+        legend.text = element_text(margin = margin(l=3), size = 10),
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.key.width = unit(25,"pt"),
+        legend.key.height = unit(15, "pt"),
+        legend.key = element_blank(),
+        axis.text = element_text(size = 7, color = "gray8"),
+        axis.line.x  = element_line(color = "gray8"),
+        axis.ticks.y = element_blank(),
+        plot.title = element_text(size = 14, hjust = 0.5, face = "bold"),
+        plot.caption = element_text(hjust = 1, size = 11, colour = "#4B4B4B"))
+
+plot5
+```
+Overall, this faceted graph suggests that regional differences play an important role in shaping the political landscape of the United States. The Northeast and West regions tend to vote more for Democrat presidential candidates than the Midwest and South regions.  Additionally, the chart indicates that the percentage of Democratic voters has been relatively stable in some regions while it has fluctuated more in others (e.g., West).
 
 ## Question 4: Final Project Data
 
@@ -190,6 +323,5 @@ Create a scatterplot (or alternative graph, as appropriate) that illustrates the
 
 
 ```{r, dpi = 150}
-
 
 ```
