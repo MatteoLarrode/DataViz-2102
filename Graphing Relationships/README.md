@@ -30,7 +30,7 @@ dem_share_80_16 <- read_dta("data/leipvote1980_2016wide.dta")
 </details>
 
 Now I join the 2020 election data to democratic votes shares of the two
-party vote, from 1980 to 2016 to the 1980-2016.
+party vote to the 1980-2016 data frame.
 
 <details>
 <summary>Code</summary>
@@ -132,7 +132,7 @@ plot1 <- ggplot(vote16_20, aes(x = pctdem2016*100, y = pctdem2020*100)) +
                   max.overlaps = Inf) +
   theme(text=element_text(family="Roboto"),
         panel.background = element_blank(),
-        plot.margin = unit(c(0, 0.5, 0.5, 0.5), "cm"),
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
         plot.title=element_text(hjust=0.5, face="bold", size=12, margin = margin(b=10)),
         plot.caption = element_text(size=9, vjust = -2),
         axis.ticks = element_blank(),
@@ -154,7 +154,7 @@ plot1
 Even using the {ggrepel} package to label state names, the plot is too
 crowded! In order to be able to read and describe the graph, let us try
 labeling only 10 states. To bring more insight on states that
-experienced change, I will choose those with the highest difference
+experienced change, I highlighted those with the highest difference
 between 2016 and 2020.
 
 <details>
@@ -169,7 +169,7 @@ vote16_20_new <- vote16_20 %>%
 
 </details>
 
-Now let us plot the new graph, with less state labels.
+Now let’s plot the new graph with less state labels.
 
 <details>
 <summary>Code</summary>
@@ -183,7 +183,7 @@ plot2 <- ggplot(vote16_20_new, aes(x = pctdem2016*100, y = pctdem2020*100, col =
                   position = position_nudge_repel(y = 1)) +
   theme(text=element_text(family="Roboto"),
         panel.background = element_blank(),
-        plot.margin = unit(c(0, 0.5, 0.5, 0.5), "cm"),
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
         plot.title=element_text(hjust=0.5, face="bold", size=12, margin = margin(b=10)),
         plot.caption = element_text(size=9, vjust = -2),
         axis.ticks = element_blank(),
@@ -215,9 +215,9 @@ vote share decreased from 2016 to 2020.
 The choice of states to label does leave out some information. For
 example, it is interesting to note that some traditionally Republican
 states, such as Arizona and Georgia, had a significant gain in
-Democratic votes in 2020. Overall, this plot provides a useful visual
-representation of the changing political landscape in the United States
-between the 2016 and 2020 presidential elections.
+Democratic votes in 2020. However, overall, this plot provides a useful
+visual representation of the changing political landscape in the United
+States between the 2016 and 2020 presidential elections.
 
 At the top-right corner of the plot, the state of Washington, D.C. seems
 like an outlier. For both 2016 and 2020, it has a much higher percentage
@@ -259,9 +259,10 @@ plot3
 ![](README_files/figure-commonmark/unnamed-chunk-7-1.png)
 
 The effect of removing Washington D.C. is that the points of the scatter
-plot are less tightly clustered. Removing the outlier - DC - helps to
-get a clearer view of the evolution of the vote for the Democrat
-candidate between 2016 and 2020 in the other states.
+plot are less tightly clustered. Removing the outlier has the effect of
+zooming in on the other states, and helps to get a clearer view of the
+evolution of the vote for the Democrat candidate between 2016 and 2020
+in the other states.
 
 ## Question 3
 
@@ -305,9 +306,9 @@ vote_80_20_new <- vote_80_20 %>%
     # ℹ 535 more rows
 
 Now, we can generate a line plot for the 50 states from 1980 to 2020,
-graphing percent Democratic on the y-axis and year on the x-axis. To
-bring more insight, we will emphasize the 5 states with the highest
-variation, using standard deviation.
+showing the percentage of Democratic vote on the y-axis and year on the
+x-axis. To bring more insight, we will emphasize the 5 states with the
+highest variation, using standard deviation.
 
 A bit of setup is necessary first.
 
@@ -323,7 +324,7 @@ state_sd <- vote_80_20_new %>%
   group_by(state)%>%
   summarize(sd = sd(vote_pct))
 
-#selection of 6 states
+#selection of the 5 states with the highest sd
 names(highlight_colors) <- c('West Virginia', 
                              'Vermont', 
                              'New Hampshire',
@@ -331,7 +332,7 @@ names(highlight_colors) <- c('West Virginia',
                              'Arkansas')
 
 
-#new data frame with only those 5 focus areas
+#new data frame with only those 5 states
 highlight_data <- vote_80_20_new %>%
   filter(state %in% names(highlight_colors))
 ```
@@ -390,7 +391,7 @@ percentage of Democratic voters over time; however, this does not
 necessarily mean that voting is becoming more Democratic. In fact, the
 data could suggest a growing polarization between Democratic and
 Republican voters. This is particularly evident when observing the
-widening of the spread of Democratic vote share over the years, at the
+widening of the range of Democratic vote share over the years, at the
 national level.
 
 There are some notable spikes and dips in the lines, indicating abrupt
@@ -401,13 +402,13 @@ decrease at the turn of the millennium.
 The lines for each state are generally quite flat, indicating that the
 percentage of Democratic voters does not vary greatly within states over
 time, with some states that consistently vote more, or less, Democratic
-others.
+than others.
 
-This leads me to the story told by my choice to highlight the states
-with the highest standard deviation in democratic voting share. A state
-with a high standard deviation indicates that it experiences more
+This leads to the story told by my choice of highlighting the states
+with the highest standard deviations in democratic voting share. A state
+with a high standard deviation indicates that it experienced more
 variability in the percentage of Democratic voters across time, compared
-to states with lower standard deviations. Those highlighted states go
+to states with lower standard deviations. Those highlighted states went
 through noteworthy changes in demographics or political attitudes over
 time, leading to more variability in the percentage of Democratic
 voters. Identifying those states is especially important in the United
@@ -478,7 +479,7 @@ plot5 <- ggplot(vote_80_20_new, aes(x = Year, y = vote_pct, group = state)) +
   
   theme(aspect.ratio = 3.2/6,
         text = element_text(family = "Roboto Condensed"),
-        plot.margin = margin(t = 0, r = 0.5, b = 0, l = 0.5, unit = "cm"),
+        plot.margin = margin(t = 0.5, r = 0.5, b = 0, l = 0.5, unit = "cm"),
         plot.background = element_rect(fill = "white"),
         panel.background = element_rect(fill = "white"),
         panel.grid.major.x = element_blank(),
@@ -530,10 +531,11 @@ censored by governments, potentially putting activists at risk.
 
 I created a dataset called “final_data.csv” by joining data on Internet
 penetration, provided by the [International Telecommunication Union
-(ITU)](https://www.itu.int/en/ITU-D/Statistics/Pages/stat/default.aspx),
-and around 50 different metrics used by
+(ITU)](https://www.itu.int/en/ITU-D/Statistics/Pages/stat/default.aspx)
+(percentage of the population who has access to the internet), and
+around 50 different metrics used by
 [V-Dem](https://www.v-dem.net/data/the-v-dem-dataset/) to measure levels
-of democracy.
+of democracy. This data is available for a total of 157 countries.
 
 <details>
 <summary>Code</summary>
@@ -580,13 +582,13 @@ head(df_reduced)
     6 Australia            0.96      0.804     2.40      2.80  TRUE   Higher Libera…
 
 My main research question is: “Does higher Internet penetration lead to
-high levels of freedom of speech?”
+higher levels of freedom of speech?” More specifically, could the
+Internet empower people who are usually less able to express themselves
+to finally share their opinions?
 
-More specifically, could the Internet empower people who are usually
-less able to express themselves to finally share their opinions? Here is
-a scatterplot that illustrates the relationship between freedom of
-discussion for women, my outcome variable, and access to the Internet,
-my main independent variable?
+Here is a scatterplot that illustrates the relationship between freedom
+of discussion for women, my outcome variable, and access to the
+Internet, my main independent variable.
 
 <details>
 <summary>Code</summary>
@@ -620,8 +622,8 @@ free_disc_women_plot
 ![](README_files/figure-commonmark/unnamed-chunk-13-1.png)
 
 From this simple scatterplot, and the linear regression fitted to the
-data, it seems that countries with high levels of Internet penetration
-are associated with high levels of freedom of discussion for women.
+data, it seems that countries with higher levels of Internet penetration
+are associated with higher levels of freedom of discussion for women.
 However, an important omitted variable bias could emerge if we do not
 take governance into account. Indeed, democracies, usually characterized
 by high levels of freedom of discussion, are also often more developed
@@ -685,9 +687,15 @@ free_disc_women_plot2
 
 This faceted graph gives some very interesting information! It suggests
 that the effect of Internet penetration on freedom of discussion for
-women is *conditional on the level of libertarian democracy*. In
+women is **conditional on the level of libertarian democracy**. In
 countries considered to be more democratic, higher access to the
 Internet seems to be correlated to an increase in the freedom of
-discussion for women. On the other hand, countries classified as having
-a lower liberal democracy index do not display an apparent relationship
-between Internet penetration and freedom of discussion for women.
+discussion for women. This observation supports the hypothesis that the
+inter-connectivity and anonymity provided by the Internet empowers
+groups that tend to be discriminated against to express themselves. On
+the other hand, countries classified as having a lower liberal democracy
+index do not display any apparent relationship between Internet
+penetration and freedom of discussion for women. This could be explained
+by the censorship and online harassment efforts put in place by
+authoritarian regimes to limit the danger that free speech on the
+Internet poses to their stability.
