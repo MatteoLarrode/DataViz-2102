@@ -237,7 +237,7 @@ plot3 <- ggplot(data = filter(vote16_20_new, state != "District of Columbia"),
                   position = position_nudge_repel(y = 1)) +
   theme(text=element_text(family="Roboto"),
         panel.background = element_blank(),
-        plot.margin = unit(c(0, 0.5, 0.5, 0.5), "cm"),
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
         plot.title=element_text(hjust=0.5, face="bold", size=12, margin = margin(b=10)),
         plot.caption = element_text(size=9, vjust = -2),
         axis.ticks = element_blank(),
