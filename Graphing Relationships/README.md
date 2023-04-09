@@ -19,7 +19,9 @@ library(haven)
 library(kableExtra) #table
 library(psych) #describe function
 library(ggplot2)
+library(ggthemes)
 library(ggrepel) #labeling state names
+library(scales)
 
 vote_2020 <- read_csv("data/us_vote_2020.csv")
 dem_share_80_16 <- read_dta("data/leipvote1980_2016wide.dta")
@@ -55,11 +57,7 @@ summary_stats <- describe(vote16_20[ , c('pctdem2016', 'pctdem2020')], fast = TR
   select(-vars) %>%
   mutate(across(-n, ~ . * 100))
   
-
 rownames(summary_stats) <- c("2016", "2020")
-
-   
-
 
 # Create HTML table
 table1 <- kbl(summary_stats, format = "html", align = "c", caption = "Summary Statistics for Democratic Vote Shares (2016-2020)") %>%
@@ -516,11 +514,180 @@ fluctuated more in others (e.g., West).
 
 ## Question 4: Final Project Data
 
-Now using some data that you would like to use in your final project,
-answer the following: Describe in detail the source of your data. What
-question do you want to ask? That is, what is your research question,
-or, put differently, what question will your graph answer? Create a
-scatterplot (or alternative graph, as appropriate) that illustrates the
-relationship between your outcome of interest and your main independent
-variable of interest. Describe the graph in a paragraph. What story does
-the graph convey?
+I am passionate about both political science and technology, so I grew
+interested in the effect of the rise and diffusion of new technologies
+on international relations. One particular topic that fascinates me is
+the relationship between internet use, especially activity on social
+networks, and freedom of speech.
+
+Social media platforms have fundamentally transformed the landscape of
+social and political movements. They have allowed individuals to bypass
+traditional gatekeepers of information, such as the mainstream media,
+and connect with each other directly. This has enabled dissidents to
+spread information and organize more quickly and effectively than ever
+before. But on the other hand, they can also be easily monitored and
+censored by governments, potentially putting activists at risk.
+
+I created a dataset called “final_data.csv” by joining data on Internet
+penetration, provided by the [International Telecommunication Union
+(ITU)](https://www.itu.int/en/ITU-D/Statistics/Pages/stat/default.aspx),
+and around 50 different metrics used by
+[V-Dem](https://www.v-dem.net/data/the-v-dem-dataset/) to measure levels
+of democracy.
+
+<details>
+<summary>Code</summary>
+
+``` r
+df <- read_csv("data/final_data.csv")%>% 
+  drop_na()
+```
+
+</details>
+
+    Rows: 202 Columns: 52
+    ── Column specification ────────────────────────────────────────────────────────
+    Delimiter: ","
+    chr  (2): Economy, country_text_id
+    dbl (50): value_2021, value_2021_perc, country_id, year, v2x_libdem, v2x_ega...
+
+    ℹ Use `spec()` to retrieve the full column specification for this data.
+    ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+<details>
+<summary>Code</summary>
+
+``` r
+df_reduced <- df %>% 
+  select(Economy, value_2021_perc, v2x_libdem, v2cldiscm, v2cldiscw)%>%
+  mutate(is_dem = v2x_libdem >= 0.5,
+         is_dem_long = ifelse(is_dem, "Higher Liberal Dem. Index", "Lower Liberal Dem. Index"))
+
+
+head(df_reduced)
+```
+
+</details>
+
+    # A tibble: 6 × 7
+      Economy   value_2021_perc v2x_libdem v2cldiscm v2cldiscw is_dem is_dem_long   
+      <chr>               <dbl>      <dbl>     <dbl>     <dbl> <lgl>  <chr>         
+    1 Albania              0.79      0.41      1.74      1.63  FALSE  Lower Liberal…
+    2 Algeria              0.71      0.138     0.436     0.097 FALSE  Lower Liberal…
+    3 Angola               0.33      0.168     0.504     0.356 FALSE  Lower Liberal…
+    4 Argentina            0.87      0.657     2.62      2.46  TRUE   Higher Libera…
+    5 Armenia              0.79      0.541     2.11      1.70  TRUE   Higher Libera…
+    6 Australia            0.96      0.804     2.40      2.80  TRUE   Higher Libera…
+
+My main research question is: “Does higher Internet penetration lead to
+high levels of freedom of speech?”
+
+More specifically, could the Internet empower people who are usually
+less able to express themselves to finally share their opinions? Here is
+a scatterplot that illustrates the relationship between freedom of
+discussion for women, my outcome variable, and access to the Internet,
+my main independent variable?
+
+<details>
+<summary>Code</summary>
+
+``` r
+free_disc_women_plot <- ggplot(df_reduced, aes(x = value_2021_perc, y = v2cldiscw))+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  
+  theme_wsj(title_family = "Roboto")+
+  theme(text=element_text(family="Roboto"),
+        plot.title=element_text(hjust=0.5, face="bold", size=12, margin = margin(b=10)),
+        plot.caption = element_text(size=9, vjust = -2),
+        axis.title = element_text(size = 12),
+        axis.title.x = element_text(vjust = -2),
+        axis.text.x = element_text(vjust = -.5),
+        axis.text.y = element_blank(),
+        axis.ticks.x = element_blank())+
+  scale_x_continuous(name ="Internet Penetration",labels = scales::percent_format(accuracy = 1))+
+  scale_y_continuous(name = "Freedom of Discussion for Women")+
+  labs(title = "Higher Access to the Internet is Correlated with More Freedom of Discussion for Women",
+       caption="Source: ITU, V-Dem | @matteoStats")
+
+free_disc_women_plot
+```
+
+</details>
+
+    `geom_smooth()` using formula = 'y ~ x'
+
+![](README_files/figure-commonmark/unnamed-chunk-13-1.png)
+
+From this simple scatterplot, and the linear regression fitted to the
+data, it seems that countries with high levels of Internet penetration
+are associated with high levels of freedom of discussion for women.
+However, an important omitted variable bias could emerge if we do not
+take governance into account. Indeed, democracies, usually characterized
+by high levels of freedom of discussion, are also often more developed
+than authoritarian regimes, and therefore have higher Internet
+penetration rates on average.
+
+An interesting extra step to analyze the relationship between Internet
+penetration and freedom of discussion could be to control for the level
+of democracy. To reach this objective, we will use V-Dem’s Liberal
+democracy index (v2x_libdem), that measures to what extent is the ideal
+of liberal democracy achieved. To clarify, the liberal principle of
+democracy emphasizes the importance of protecting individual and
+minority rights against the tyranny of the state and the tyranny of the
+majority. This is achieved by constitutionally protected civil
+liberties, strong rule of law, an independent judiciary, and effective
+checks and balances that, together, limit the exercise of executive
+power.
+
+To explore this addition of an independent variable to the model, we can
+create the same scatterplot as before, but faceted by different levels
+of the liberal democracy index. There is no specific threshold level at
+which a country is considered a democracy on the V-Dem index. Rather,
+the index measures the extent to which a country meets the various
+criteria for democracy and assigns a score accordingly. The higher the
+score, the more democratic the country is considered to be. However, for
+the purpose of this graph, I arbitrarily decided of a threshold (0.5) to
+separate countries into two categories of liberal democracy.
+
+<details>
+<summary>Code</summary>
+
+``` r
+free_disc_women_plot2 <- ggplot(df_reduced, aes(x = value_2021_perc, y = v2cldiscw))+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  
+  facet_wrap(~ is_dem_long, ncol=2) +
+  
+  theme_wsj(title_family = "Roboto")+
+  theme(text=element_text(family="Roboto"),
+        plot.title=element_text(hjust=0.5, face="bold", size=12, margin = margin(b=10)),
+        plot.caption = element_text(size=9, vjust = -2),
+        axis.title = element_text(size = 12),
+        axis.title.x = element_text(vjust = -2),
+        axis.text.x = element_text(vjust = -.5),
+        axis.text.y = element_blank(),
+        axis.ticks.x = element_blank())+
+  scale_x_continuous(name ="Internet Penetration",labels = scales::percent_format(accuracy = 1))+
+  scale_y_continuous(name = "Freedom of Discussion for Women")+
+  labs(title = "Relationship between Internet Penetration and Freedom of Discussion for Women \n at Different Levels of Liberal Democracy",
+       caption="Source: ITU, V-Dem | @matteoStats")
+
+free_disc_women_plot2
+```
+
+</details>
+
+    `geom_smooth()` using formula = 'y ~ x'
+
+![](README_files/figure-commonmark/unnamed-chunk-14-1.png)
+
+This faceted graph gives some very interesting information! It suggests
+that the effect of Internet penetration on freedom of discussion for
+women is *conditional on the level of libertarian democracy*. In
+countries considered to be more democratic, higher access to the
+Internet seems to be correlated to an increase in the freedom of
+discussion for women. On the other hand, countries classified as having
+a lower liberal democracy index do not display an apparent relationship
+between Internet penetration and freedom of discussion for women.
