@@ -337,28 +337,30 @@ More specifically, could the Internet empower people who are usually less able t
 free_disc_women_plot <- ggplot(df, aes(x = value_2021_perc, y = v2cldiscw))+
   geom_point()+
   geom_smooth(method = "lm")+
-
+  
+  theme_wsj(title_family = "Roboto")+
   theme(text=element_text(family="Roboto"),
-        panel.background = element_blank(),
-        plot.margin = unit(c(0, 0.5, 0.5, 0.5), "cm"),
         plot.title=element_text(hjust=0.5, face="bold", size=12, margin = margin(b=10)),
         plot.caption = element_text(size=9, vjust = -2),
-        axis.text.x = element_text(vjust = 5),
-        axis.title.y = element_blank(),
-        axis.ticks = element_blank(),
-        panel.grid.major = element_line(color = "gray", linetype = "dashed", linewidth = 0.2))+
+        axis.title = element_text(size = 12),
+        axis.title.x = element_text(vjust = -2),
+        axis.text.x = element_text(vjust = -.5),
+        axis.text.y = element_blank(),
+        axis.ticks.x = element_blank())+
   scale_x_continuous(name ="Internet Penetration",labels = scales::percent_format(accuracy = 1))+
   scale_y_continuous(name = "Freedom of Discussion for Women")+
-  labs(title = "Higher Access to the Internet is Correlated to More Freedom of Discussion for Women",
+  labs(title = "Higher Access to the Internet is Correlated with More Freedom of Discussion for Women",
        caption="Source: ITU, V-Dem | @matteoStats")
 
 free_disc_women_plot
 
 ```
-From this simple scatterplot, and the linear regression fitted to the data, it seems that countries with high levels of Internet penetration are associated to high levels of freedom of discussion for women. However, an important omitted variable bias could emerge if we do not take governance into account. Indeed, democracies, usually characterized by high levels of freedom of discussion, are also often more developed than authoritarian regimes, and therefore have higher Internet penetration rates on average. 
+From this simple scatterplot, and the linear regression fitted to the data, it seems that countries with high levels of Internet penetration are associated with high levels of freedom of discussion for women. However, an important omitted variable bias could emerge if we do not take governance into account. Indeed, democracies, usually characterized by high levels of freedom of discussion, are also often more developed than authoritarian regimes, and therefore have higher Internet penetration rates on average. 
 
 An interesting extra step to analyze the relationship between Internet penetration and freedom of discussion could be to control for the level of democracy. To reach this objective, we will use V-Dem's Liberal democracy index (v2x_libdem), that measures to what extent is the ideal of liberal democracy achieved. To clarify, the liberal principle of democracy emphasizes the importance of protecting individual and minority rights against the tyranny of the state and the tyranny of the majority. This is achieved by constitutionally protected civil liberties, strong rule of law, an independent judiciary, and effective checks and balances that, together, limit the exercise of executive power. 
 
-To explore this addition of an independent variabe to the model, we can created the same scatterplot as before, but faceted by different levels of the liberal democracy index. 
+To explore this addition of an independent variable to the model, we can create the same scatterplot as before, but faceted by different levels of the liberal democracy index.
+
+
 
 
