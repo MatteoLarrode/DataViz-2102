@@ -259,7 +259,7 @@ plot3
 ![](README_files/figure-commonmark/unnamed-chunk-7-1.png)
 
 The effect of removing Washington D.C. is that the points of the scatter
-plot are less tightly clustered. Removing the outlier has the effect of
+plot are less tightly clustered. Removing the outlier had the effect of
 zooming in on the other states, and helps to get a clearer view of the
 evolution of the vote for the Democrat candidate between 2016 and 2020
 in the other states.
