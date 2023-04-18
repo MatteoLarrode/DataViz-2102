@@ -35,13 +35,13 @@ I created a dataset called "final_data.csv" by joining data on Internet penetrat
 
 Here is a scatterplot that illustrates the relationship between freedom of discussion for women, my outcome variable, and access to the Internet, my main independent variable. Note that the graph is faceted by different levels of the VDem liberal democracy index.
 
-![Figure 1](images/fig1.png) The main objective of the report is to uncover the nature of the interaction between governance and the effect of Internet penetration on freedom of speech, using exploratory data analysis and data visualization.
+![Figure 1](img/fig1.png) The main objective of the report is to uncover the nature of the interaction between governance and the effect of Internet penetration on freedom of speech, using exploratory data analysis and data visualization.
 
 ## II) In Democracies: The Internet & Social Media as a Promoter of Civil Liberties
 
 Hypothesis 1: In democracies, institutions and rules that govern the use of the Internet are such that it can be used freely by citizens to share their opinion and organize offline action in a safe environment.
 
-### i- A Platform to Share Opinions and Speak Out in Safety 
+### i- A Platform to Share Opinions and Speak Out in Safety
 
 Hypothesis 1.1: Democracies with more access to the Internet will display higher levels of freedom of speech.
 
