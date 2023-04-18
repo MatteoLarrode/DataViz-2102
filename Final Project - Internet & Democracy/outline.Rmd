@@ -1,17 +1,17 @@
 ---
 title: "Outline"
-author: "Matteo Larrode"
-date: "2023-04-18"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 # Executive Summary
 
-Will be written depending on the results I get
+Will be written depending on the conclusions I reach. 
 
 # Introduction
 
- A growing body of literature is interested in the effect of the rise and diffusion of new technologies on international relations. One particular topic we are interested in is the relationship between internet use, especially activity on social networks, and freedom of speech. Social media platforms have fundamentally transformed the landscape of social and political movements. They have allowed individuals to bypass traditional gatekeepers of information, such as the mainstream media, and connect with each other directly. This has enabled dissidents to spread information and organize more quickly and effectively than ever before. But on the other hand, they can also be easily monitored and censored by governments, potentially putting activists at risk. In this report, I will be looking at the relationship between access to the Internet, as a proxy for access to social media, and civil liberties. I will compare and contrast different forms of governance, and focus on gender inequalities. 
+ A growing body of literature is interested in the effect of the rise and diffusion of new technologies on international relations. One particular topic I am interested in is the relationship between internet use, especially activity on social networks, and freedom of speech. Social media platforms have fundamentally transformed the landscape of social and political movements. They have allowed individuals to bypass traditional gatekeepers of information, such as the mainstream media, and connect with each other directly. This has enabled dissidents to spread information and organize more quickly and effectively than ever before. But on the other hand, they can also be easily monitored and censored by governments, potentially putting activists at risk. In this report, I will be looking at the relationship between access to the Internet, as a proxy for access to social media, and civil liberties. I will compare and contrast different forms of governance, and focus on gender inequalities. 
 
 # Dataset & Methodology
 
@@ -20,29 +20,32 @@ I created a dataset called “final_data.csv” by joining data on Internet pene
 [Add explanation about data on gender]
 
 
-#Findings 
+# Findings 
 
-##General Findings 
+## I) General Findings 
 
-![Figure 1]("images/fig1.png")
+**Main research question**: “Does higher Internet penetration lead to higher levels of freedom of speech?” More specifically, could the Internet empower people who are usually less able to express themselves to finally share their opinions?
 
-	→ OBJECTIVE: uncover the nature of the interaction between governance and the effect of Internet penetration on freedom of speech 
+Here is a scatterplot that illustrates the relationship between freedom of discussion for women, my outcome variable, and access to the Internet, my main independent variable. Note that the graph is faceted by different levels of the VDem liberal democracy index.
 
-In Democracies: The Internet & Social Media as a Promoter of Civil Liberties
+![Figure 1](images/fig1.png)
+The main objective of the report is to uncover the nature of the interaction between governance and the effect of Internet penetration on freedom of speech, using exploratory data analysis and data visualization. 
 
-A Platform to Share Opinions and Speak Out in Safety
-
-A Platform to Organize Offline Action
-
-Limitations: Dangers of Social Media to Democracy
-
-In Autocracies: The Internet as a Tool of Repression 
-
-Censorship & Disinformation → nature of the information
-
-Surveillance & violence → use of the information
-
-Optimism: the Power of the Internet for Social Change 
+## II) In Democracies: The Internet & Social Media as a Promoter of Civil Liberties
 
 
-V) Research Conclusions
+#### 1. A Platform to Share Opinions and Speak Out in Safety
+
+#### 2. A Platform to Organize Offline Action
+
+#### 3. Limitations: Dangers of Social Media to Democracy
+
+## III) In Autocracies: The Internet as a Tool of Repression 
+
+#### 1. Censorship & Disinformation → nature of the information
+
+#### 2. Surveillance & violence → use of the information
+
+#### 3. Optimism: the Power of the Internet for Social Change 
+
+# Research Conclusions
