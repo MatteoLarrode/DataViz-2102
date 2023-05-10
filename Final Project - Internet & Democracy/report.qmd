@@ -1,13 +1,11 @@
 ---
-title: "Outline - The Internet, Social Media, and Civil Liberties"
-output:
-  pdf_document: default
-  html_document: default
+title: "The Internet, Social Media, and Civil Liberties"
+author: "Matteo Larrode"
+format:
+  html:
+    code-fold: true
+editor: visual
 ---
-
-# Executive Summary
-
-Will be written depending on the conclusions I reach.
 
 # Introduction
 
