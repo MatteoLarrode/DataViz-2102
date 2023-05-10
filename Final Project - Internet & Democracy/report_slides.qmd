@@ -1,0 +1,104 @@
+---
+title: "Freedom of Speech in the Digital Era: Challenges and Opportunities"
+author: "Matteo Larrode - May 2023"
+format: revealjs
+editor: source
+---
+
+```{r loading, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(ggthemes)
+library(ggrepel)
+library(scales)
+#making tables
+library(tableone)
+library(kableExtra)
+#print regression plot
+library(sjPlot)
+
+#load dataset
+df <- read_csv("data/final_data.csv")
+
+#final variable selection
+df_reduced <- df %>% 
+  select(Economy, #countries
+         most_recent_perc,  #internet access(%)
+         v2x_regime,  #regime classification (4)
+         v2x_freexp_altinf, #freedom of Expression and Alternative Sources of Information index
+         v2cldiscm, #freedom of discussion for men
+         v2cldiscw,  #freedom of discussion for women
+         v2mecenefi, #Internet censorship effort (higher = less censorship)
+         v2smgovdom, #Government dissemination of false information domestic (higher = less dissemination)
+         v2smgovfilprc, #Government Internet filtering in practice (high = less often)
+         v2smgovshut, #Government Internet shut down in practice (high = less often)
+         v2smgovsmmon, #Government social media monitoring  (high = less monitoring)
+         v2smarrest, #Arrests for online political content (high = less likely)
+         v2smorgavgact, #Average people’s use of social media to organize offline action
+         v2smorgelitact)%>% #Elites’ use of social media to organize offline action
+  #variables for capacity coded in the opposite way as variables for gvt action: reverse code them
+  mutate(v2mecenefi = -1*v2mecenefi,
+         v2smgovdom = -1*v2smgovdom,
+         v2smgovfilprc = -1*v2smgovfilprc,
+         v2smgovshut = -1*v2smgovshut,
+         v2smgovsmmon = -1*v2smgovsmmon,
+         v2smarrest = -1*v2smarrest)%>%
+  #new variable for regimes
+  mutate(v2x_regime = as.factor(v2x_regime),
+         regime_type = as.factor(ifelse(grepl("democracy", v2x_regime), "Democracies", "Autocracies")))
+
+#scale all variables to 0-100
+df_transformed <- df_reduced  %>% 
+  mutate_if(is.numeric, ~ . * 100)
+```
+
+## Research Question
+
+What is the effect of  Internet access on freedom of discussion and activism? 
+And how does this effect differ across regime types?
+
+### Data and Methodology
+
+![](report_slides_files/img/dataset.png)
+
+## General Findings
+
+```{r message=FALSE, dpi= 200}
+freedom_speech_internet_facet <- ggplot(df_reduced, aes(x = most_recent_perc, y = v2x_freexp_altinf))+
+  geom_point()+
+  facet_wrap(~ regime_type)+
+  geom_smooth(method = "lm")+
+  
+  theme(text=element_text(family="Roboto Condensed"),
+        plot.margin = margin(t = 0, r = 0.5, b = 0, l = 0.5, unit = "cm"),
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(color = "#dcdbd8"),
+        panel.grid.minor.y = element_blank(),
+        plot.title = element_text(size = rel(1.2), hjust = 0, face = "bold"),
+        plot.caption = element_text(hjust = 0, size = 9, colour = "#4B4B4B"),
+        axis.text = element_text(size = rel(1), color = "gray8"),
+        axis.text.y = element_blank(),
+        axis.line.x  = element_line(color = "gray8"),
+        axis.ticks.y = element_blank())+
+  scale_x_continuous(name ="Internet Penetration",labels = scales::percent_format(accuracy = 1))+
+  scale_y_continuous(name = "Freedom of Expression")+
+  labs(title = "Relationship between Internet Penetration and Freedom of Discussion \nDepending on Regime Type",
+       caption="Source: ITU, V-Dem")
+
+freedom_speech_internet_facet
+```
+
+The relationship between internet access and freedom of discussion is **conditional on regime type**.
+
+## Democracies
+
+Social media can empower individuals in democracies to share their opinions and engage in political discussions through inter-connectivity and anonymity. 
+
+![](report_slides_files/img/table1.png)
+But it is also a strong catalyst for discrimination and polarization. 
+
+## Autocracies
+
