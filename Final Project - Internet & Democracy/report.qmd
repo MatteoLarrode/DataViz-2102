@@ -34,6 +34,7 @@ library(ggplot2)
 library(ggthemes)
 library(ggrepel)
 library(scales)
+library(RColorBrewer)
 #making tables
 library(tableone)
 library(kableExtra)
@@ -242,7 +243,6 @@ Social media has often been associated with discrimination and polarization, wit
 df_democracies$countries_ordered <- factor(df_democracies$Countries, 
                                            levels = df_democracies$Countries[rev(order(df_democracies$`Freedom of discussion for men`))])
 
-
 dumbbel_plot_speech <- ggplot(df_democracies%>%filter(`Regime classification` == "Liberal democracy"))+
   geom_segment(aes(x = `Freedom of discussion for women`, 
                    y = countries_ordered,
@@ -304,7 +304,6 @@ df_autocracies <- df_transformed%>%
   mutate(labelled = ifelse(Economy %in% labelled, Economy, ""))
 
 
-
 autocracies_sm_monitoring <- ggplot(df_autocracies, 
                                     aes(x = v2smgovsmmon, 
                                         y = v2smarrest))+
@@ -346,39 +345,42 @@ Although countries such as China and Qatar are perfect examples of autocracies t
 In autocratic regimes, and despite the dangers such actions bears, the internet has also been a platform for social change. Citizens in authoritarian states often use it to document and expose human rights abuses, corruption, and government repression. Social media has allowed activists and ordinary citizens to share videos, photos, and other evidence of abuses, bypassing traditional state-controlled media outlets. This has helped to bring international attention to human rights issues and put pressure on authoritarian governments to change their behavior.
 
 ```{r autocracies plot2, dpi=200}
+df_autocracies_new <- df_autocracies %>%
+  mutate(sm_use_diff = v2smorgavgact - v2smorgelitact)%>%
+  mutate(countries_ordered = factor(Economy,
+                                    levels = Economy[rev(order(sm_use_diff))]))%>%
+  filter(row_number() %% 2 == 0)
 
-autocracies_sm_activity <- ggplot(df_autocracies, 
-                                    aes(x = v2smgovsmmon, 
-                                        y = v2smarrest))+
-  geom_point(aes(col = v2smorgavgact))+
-  geom_text_repel(aes(label = labelled))+
+
+autocracies_sm_activity <- ggplot(df_autocracies_new, aes(x = sm_use_diff, y = countries_ordered))+
+  geom_bar(stat = "identity", 
+           show.legend = FALSE,
+            aes(fill = sm_use_diff))+
+  
+  scale_fill_gradient2(midpoint = 0, 
+                       low = "blue", mid = "white", high = "red")+
+ 
   theme(text=element_text(family="Roboto Condensed"),
-        plot.margin = margin(t = 0, r = 0.5, b = 0, l = 0.5, unit = "cm"),
         plot.background = element_rect(fill = "white"),
         panel.background = element_rect(fill = "white"),
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
         panel.grid.major.y = element_line(color = "#dcdbd8"),
         panel.grid.minor.y = element_blank(),
-        plot.title = element_text(size = rel(1.2), hjust = 0, face = "bold"),
-        plot.caption = element_text(hjust = 0, size = 9, colour = "#4B4B4B"),
-        axis.text = element_text(size = rel(1), color = "gray8"),
-        axis.text.y = element_blank(),
+        plot.title = element_text(size = rel(0.9), hjust = 0, face = "bold"),
+        plot.caption = element_text(hjust = 0, size = 8, colour = "#4B4B4B"),
+        axis.text = element_text(size = rel(0.8), color = "gray8"),
+        axis.title.y = element_blank(),
         axis.line.x  = element_line(color = "gray8"),
         axis.ticks.y = element_blank(),
-        legend.position = "right",
-        legend.text = element_text(size = 8),
-        legend.key.height= unit(1.5, 'cm'),
-        legend.key.width= unit(0.3, 'cm'))+
-  scale_x_continuous(name ="Social Media Monitoring")+
-  scale_y_continuous(name = "Arrests for online political content")+
-  scale_colour_viridis_c(name = "Internet Access", option = "mako", direction = -1) +
-  labs(title = "Social Media Monitoring and Arrests for Political Content Among Autocracies",
-       caption="Source: ITU, V-Dem")
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank())+
+  labs(title = "Difference between Average People's and Elites' Use of the Internet for Offline Action",
+       caption="Source: V-Dem")
+  
 
 autocracies_sm_activity
 ```
+Countries in purple have a negative difference, which means governing elites use social media to organize offline action more than the average people. Some autocracies from the Persian Gulf can be found among them, such as the Qatar and the United Arab Emirates. 
 
-
-```
-
+However, in the case of countries in red, the average people is more skilled at using social media for offline action than their governing elites. Therefore, we can expect them to better leverage the inter-connectivity that internet has to offer to challenge their respective repressive regimes. 

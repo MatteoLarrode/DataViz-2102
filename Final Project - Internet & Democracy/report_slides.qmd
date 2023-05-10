@@ -144,4 +144,8 @@ autocracies_sm_monitoring <- ggplot(df_autocracies,
 autocracies_sm_monitoring
 ```
 
+::: {style="font-size:25px"}
+
 Although political activity on social media is often made difficult or dangerous in many autocracies using techniques of "digital repression," the potential for inter-connectivity offered by the internet makes it a cornerstone of activism against repressive regimes.
+
+:::
