@@ -436,10 +436,62 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="in-autocracies-a-tool-for-digital-repression">In Autocracies: a Tool for Digital Repression…</h3>
 <p>At both a domestic and international level, authoritarian governments are attempting to break up the open internet and create a network of oppressive enclaves. This is resulting in an increasing number of governments controlling what individuals can access and share online, by blocking foreign websites, holding onto personal data, and centralizing their technical infrastructure. Consequently, internet freedom globally has decreased for the <a href="https://freedomhouse.org/report/freedom-net/2022/countering-authoritarian-overhaul-internet">12th year in a row</a>.</p>
 <p>Digital repression in many countries has increased, coinciding with wider crackdowns on human rights. Russia, Myanmar, Libya, and Sudan experienced the most significant declines in internet freedom. Governments are blocking political, social, or religious content, often targeting information sources based outside their borders, leading to record-high online censorship. In these cases, the internet becomes a tool for disinformation and propaganda, with governments using it to manipulate public opinion and suppress dissent.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>labelled <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Qatar"</span>, <span class="st">"China"</span>, <span class="st">"South Sudan"</span>, <span class="st">"Nicaragua"</span>, <span class="st">"Egypt"</span>, <span class="st">"Russia"</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Kenya"</span>, <span class="st">"Iraq"</span>, <span class="st">"Kuwait"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>df_autocracies <span class="ot">&lt;-</span> df_transformed<span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(regime_type <span class="sc">==</span> <span class="st">"Autocracies"</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">labelled =</span> <span class="fu">ifelse</span>(Economy <span class="sc">%in%</span> labelled, Economy, <span class="st">""</span>))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>autocracies_sm_monitoring <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_autocracies, </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">aes</span>(<span class="at">x =</span> v2smgovsmmon, </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">y =</span> v2smarrest))<span class="sc">+</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">col =</span> most_recent_perc))<span class="sc">+</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> labelled))<span class="sc">+</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text=</span><span class="fu">element_text</span>(<span class="at">family=</span><span class="st">"Roboto Condensed"</span>),</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="fl">0.5</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">l =</span> <span class="fl">0.5</span>, <span class="at">unit =</span> <span class="st">"cm"</span>),</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>),</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>),</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.y =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"#dcdbd8"</span>),</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">1.2</span>), <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">9</span>, <span class="at">colour =</span> <span class="st">"#4B4B4B"</span>),</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="dv">1</span>), <span class="at">color =</span> <span class="st">"gray8"</span>),</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line.x  =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"gray8"</span>),</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"right"</span>,</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>),</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.height=</span> <span class="fu">unit</span>(<span class="fl">1.5</span>, <span class="st">'cm'</span>),</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.key.width=</span> <span class="fu">unit</span>(<span class="fl">0.3</span>, <span class="st">'cm'</span>))<span class="sc">+</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span><span class="st">"Social Media Monitoring"</span>)<span class="sc">+</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name =</span> <span class="st">"Arrests for online political content"</span>)<span class="sc">+</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_c</span>(<span class="at">name =</span> <span class="st">"Internet Access"</span>, <span class="at">option =</span> <span class="st">"mako"</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Social Media Monitoring and Arrests for Political Content Among Autocracies"</span>,</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">"Source: ITU, V-Dem"</span>)</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>autocracies_sm_monitoring</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="report_files/figure-html/autocracies%20plot1-1.png" class="img-fluid" width="1400"></p>
+</div>
+</div>
+<p>This graph clearly shows that social media monitoring is strongly positively correlated with arrests for online political content. Using colour to show internet access in this graph is helpful to understand whether a high internet penetration allows to better monitor people and make more arrests.</p>
+<p>Although countries such as China and Qatar are perfect examples of autocracies that successfully leverage their high access to the internet to monitor the political activity of their people, it is difficult to really distinguish a trend that would confirm the hypothesis that countries with more internet are subject to more intense surveillance and repression. For example, South Sudan has one of the lowest access to the internet (6%) and yet displays very high levels of both social media monitoring and arrests for online political content.</p>
 </section>
 <section id="that-can-also-foster-social-change" class="level3">
 <h3 class="anchored" data-anchor-id="that-can-also-foster-social-change">… That can also Foster Social Change</h3>
 <p>In autocratic regimes, and despite the dangers such actions bears, the internet has also been a platform for social change. Citizens in authoritarian states often use it to document and expose human rights abuses, corruption, and government repression. Social media has allowed activists and ordinary citizens to share videos, photos, and other evidence of abuses, bypassing traditional state-controlled media outlets. This has helped to bring international attention to human rights issues and put pressure on authoritarian governments to change their behavior.</p>
+<div class="cell">
+
+</div>
 </section>
 </section>
 

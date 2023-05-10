@@ -98,7 +98,48 @@ The relationship between internet access and freedom of discussion is **conditio
 Social media can empower individuals in democracies to share their opinions and engage in political discussions through inter-connectivity and anonymity. 
 
 ![](report_slides_files/img/table1.png)
+</br>
 But it is also a strong catalyst for discrimination and polarization. 
 
 ## Autocracies
 
+```{r autocracies plot1, dpi=200}
+labelled <- c("Qatar", "China", "South Sudan", "Nicaragua", "Egypt", "Russia",
+              "Kenya", "Iraq", "Kuwait")
+
+df_autocracies <- df_transformed%>%
+  filter(regime_type == "Autocracies")%>%
+  mutate(labelled = ifelse(Economy %in% labelled, Economy, ""))
+
+
+autocracies_sm_monitoring <- ggplot(df_autocracies, 
+                                    aes(x = v2smgovsmmon, 
+                                        y = v2smarrest))+
+  geom_point(aes(col = most_recent_perc))+
+  geom_text_repel(aes(label = labelled))+
+  theme(text=element_text(family="Roboto Condensed"),
+        plot.margin = margin(t = 0, r = 0.5, b = 0, l = 0.5, unit = "cm"),
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(color = "#dcdbd8"),
+        panel.grid.minor.y = element_blank(),
+        plot.title = element_text(size = rel(1.2), hjust = 0, face = "bold"),
+        plot.caption = element_text(hjust = 0, size = 9, colour = "#4B4B4B"),
+        axis.text = element_text(size = rel(1), color = "gray8"),
+        axis.text.y = element_blank(),
+        axis.line.x  = element_line(color = "gray8"),
+        axis.ticks.y = element_blank(),
+        legend.position = "right",
+        legend.text = element_text(size = 8),
+        legend.key.height= unit(1.5, 'cm'),
+        legend.key.width= unit(0.3, 'cm'))+
+  scale_x_continuous(name ="Social Media Monitoring")+
+  scale_y_continuous(name = "Arrests for online political content")+
+  scale_colour_viridis_c(name = "Internet Access", option = "mako", direction = -1) +
+  labs(title = "Social Media Monitoring and Arrests for Political Content Among Autocracies",
+       caption="Source: ITU, V-Dem")
+
+autocracies_sm_monitoring
+```

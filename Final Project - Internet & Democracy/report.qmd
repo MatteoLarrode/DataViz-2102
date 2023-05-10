@@ -296,11 +296,50 @@ At both a domestic and international level, authoritarian governments are attemp
 Digital repression in many countries has increased, coinciding with wider crackdowns on human rights. Russia, Myanmar, Libya, and Sudan experienced the most significant declines in internet freedom. Governments are blocking political, social, or religious content, often targeting information sources based outside their borders, leading to record-high online censorship. In these cases, the internet becomes a tool for disinformation and propaganda, with governments using it to manipulate public opinion and suppress dissent.
 
 ```{r autocracies plot1, dpi=200}
+labelled <- c("Qatar", "China", "South Sudan", "Nicaragua", "Egypt", "Russia",
+              "Kenya", "Iraq", "Kuwait")
+
+df_autocracies <- df_transformed%>%
+  filter(regime_type == "Autocracies")%>%
+  mutate(labelled = ifelse(Economy %in% labelled, Economy, ""))
 
 
 
+autocracies_sm_monitoring <- ggplot(df_autocracies, 
+                                    aes(x = v2smgovsmmon, 
+                                        y = v2smarrest))+
+  geom_point(aes(col = most_recent_perc))+
+  geom_text_repel(aes(label = labelled))+
+  theme(text=element_text(family="Roboto Condensed"),
+        plot.margin = margin(t = 0, r = 0.5, b = 0, l = 0.5, unit = "cm"),
+        plot.background = element_rect(fill = "white"),
+        panel.background = element_rect(fill = "white"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(color = "#dcdbd8"),
+        panel.grid.minor.y = element_blank(),
+        plot.title = element_text(size = rel(1.2), hjust = 0, face = "bold"),
+        plot.caption = element_text(hjust = 0, size = 9, colour = "#4B4B4B"),
+        axis.text = element_text(size = rel(1), color = "gray8"),
+        axis.text.y = element_blank(),
+        axis.line.x  = element_line(color = "gray8"),
+        axis.ticks.y = element_blank(),
+        legend.position = "right",
+        legend.text = element_text(size = 8),
+        legend.key.height= unit(1.5, 'cm'),
+        legend.key.width= unit(0.3, 'cm'))+
+  scale_x_continuous(name ="Social Media Monitoring")+
+  scale_y_continuous(name = "Arrests for online political content")+
+  scale_colour_viridis_c(name = "Internet Access", option = "mako", direction = -1) +
+  labs(title = "Social Media Monitoring and Arrests for Political Content Among Autocracies",
+       caption="Source: ITU, V-Dem")
 
+autocracies_sm_monitoring
 ```
+This graph clearly shows that social media monitoring is strongly positively correlated with arrests for online political content. Using colour to show internet access in this graph is helpful to understand whether a high internet penetration allows to better monitor people and make more arrests. 
+
+Although countries such as China and Qatar are perfect examples of autocracies that successfully leverage their high access to the internet to monitor the political activity of their people, it is difficult to really distinguish a trend that would confirm the hypothesis that countries with more internet are subject to more intense surveillance and repression. For example, South Sudan has one of the lowest access to the internet (6%) and yet displays very high levels of both social media monitoring and arrests for online political content. On the other hand, the people from Kuwait benefit from a near perfect internet access, without suffering from traditional means of digital repression. 
+
 
 ### ... That can also Foster Social Change
 
