@@ -97,7 +97,7 @@ The relationship between internet access and freedom of discussion is **conditio
 
 Social media can empower individuals in democracies to share their opinions and engage in political discussions through inter-connectivity and anonymity. 
 
-![](report_slides_files/img/table1.png)
+![](report_slides_files/img/table1.png){width=750 height=300}
 </br>
 But it is also a strong catalyst for discrimination and polarization. 
 
@@ -143,3 +143,5 @@ autocracies_sm_monitoring <- ggplot(df_autocracies,
 
 autocracies_sm_monitoring
 ```
+
+Although political activity on social media is often made difficult or dangerous in many autocracies using techniques of "digital repression," the potential for inter-connectivity offered by the internet makes it a cornerstone of activism against repressive regimes.
