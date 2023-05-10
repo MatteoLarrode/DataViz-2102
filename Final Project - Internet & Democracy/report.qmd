@@ -230,7 +230,7 @@ These two linear models help reach two main conclusions:
 
 - As  access to the internet increases, the freedom of expression in democracies for both men and women increase significantly, with liberal democracies having a higher level of freedom of discussion than electoral democracies. 
 
-- Hold democracy types constant, men’s level of freedom of discussion increases more than women's when internet access grows.
+- Holding democracy types constant, men’s level of freedom of discussion increases more than women's when internet access grows.
 
 ### ... That can also Breed Discrimination
 
@@ -238,7 +238,7 @@ The reason for this difference is that social media can be a double edged sword 
 
 Social media has often been associated with discrimination and polarization, with algorithms and echo chambers leading to the amplification of extreme viewpoints and the spread of misinformation. Such actions can lead to the exacerbation of animosity between various groups. In the absence of any consequences for publicizing discriminatory or violent views online, this may embolden malicious actors to carry out direct attacks against individuals whom they wish to sabotage or discredit.
 
-```{r dumbbell gender plot, dpi=200, fig.width=7, fig.height=4}
+```{r dumbbell gender plot, dpi=200}
 df_democracies$countries_ordered <- factor(df_democracies$Countries, 
                                            levels = df_democracies$Countries[rev(order(df_democracies$`Freedom of discussion for men`))])
 
@@ -249,36 +249,35 @@ dumbbel_plot_speech <- ggplot(df_democracies%>%filter(`Regime classification` ==
                    xend = `Freedom of discussion for men`,
                    yend = countries_ordered),
                color = "#aeb6bf",
-               linewidth = 4.5, alpha = .5) +
+               linewidth = 3.5, alpha = .5) +
   geom_point(aes(x = `Freedom of discussion for men`, 
                  y = countries_ordered, 
-                 color = "Men"), size = 4) +
+                 color = "Men"), size = 3) +
   geom_point(aes(x = `Freedom of discussion for women`, 
                  y = countries_ordered, 
-                 color = "Women"), size = 4) +
+                 color = "Women"), size = 3) +
   scale_color_manual(values = c("Men" = "blue", "Women" = "red"), 
                      labels = c("Freedom of Discussion for Men", 
                                 "Freedom of Discussion for Women")) +
   
   theme(text=element_text(family="Roboto Condensed"),
-        plot.margin = margin(t = 0, r = 0.5, b = 0, l = 0.5, unit = "cm"),
         plot.background = element_rect(fill = "white"),
         panel.background = element_rect(fill = "white"),
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
         panel.grid.major.y = element_line(color = "#dcdbd8"),
         panel.grid.minor.y = element_blank(),
-        plot.title = element_text(size = rel(1.4), hjust = 0, face = "bold"),
-        plot.caption = element_text(hjust = 0, size = 9, colour = "#4B4B4B"),
-        axis.text = element_text(size = rel(1), color = "gray8"),
+        plot.title = element_text(size = rel(1.2), hjust = 0, face = "bold"),
+        plot.caption = element_text(hjust = 0, size = 8, colour = "#4B4B4B"),
+        axis.text = element_text(size = rel(0.7), color = "gray8"),
         axis.title.y = element_blank(),
-        axis.title.x = element_text(size = 14),
+        axis.title.x = element_text(size = 10),
         axis.line.x  = element_line(color = "gray8"),
         axis.ticks.y = element_blank(),
-        legend.position = c(0.85, 0.8),
+        legend.position = c(0.2, 0.1),
         legend.title = element_blank(),
         legend.key = element_blank(),
-        legend.text = element_text(size = 12),
+        legend.text = element_text(size = 9),
         legend.margin = margin(0, 0, 0, 0))+
   labs(title = "Gender Differences of Freedom of Discussion in Liberal Democracies ",
        x = "Freedom of Discussion",
@@ -296,10 +295,21 @@ At both a domestic and international level, authoritarian governments are attemp
 
 Digital repression in many countries has increased, coinciding with wider crackdowns on human rights. Russia, Myanmar, Libya, and Sudan experienced the most significant declines in internet freedom. Governments are blocking political, social, or religious content, often targeting information sources based outside their borders, leading to record-high online censorship. In these cases, the internet becomes a tool for disinformation and propaganda, with governments using it to manipulate public opinion and suppress dissent.
 
+```{r autocracies plot1, dpi=200}
+
+
+
+
+```
 
 ### ... That can also Foster Social Change
 
 In autocratic regimes, and despite the dangers such actions bears, the internet has also been a platform for social change. Citizens in authoritarian states often use it to document and expose human rights abuses, corruption, and government repression. Social media has allowed activists and ordinary citizens to share videos, photos, and other evidence of abuses, bypassing traditional state-controlled media outlets. This has helped to bring international attention to human rights issues and put pressure on authoritarian governments to change their behavior.
 
+```{r autocracies plot2, dpi=200}
 
+
+
+
+```
 
